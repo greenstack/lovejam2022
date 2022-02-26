@@ -8,14 +8,14 @@ function Earthquake:new(startRadius, endRadius, obj)
 	eq.startRadius = startRadius
 	eq.currentRadius = startRadius
 	eq.endRadius = endRadius
-	eq.expansionRate = 4
+	eq.expansionRate = 100
 
 	return eq;
 end
 
 function Earthquake:update(entity, dt)
 	if (self.currentRadius > self.endRadius) then
-		-- TODO: Destroy this!
+		entity:kill()
 		return
 	end
 	self.currentRadius = self.currentRadius + self.expansionRate * dt
