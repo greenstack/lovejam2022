@@ -12,8 +12,17 @@ function World:new(name)
 end
 
 function World:update(dt)
-	for _, entity in ipairs(self.entities) do
+	local i=1
+	while i <= #self.entities do
+		local entity = self.entities[i]
 		entity:update(dt)
+		-- All of the components should have updated
+		-- Might want to move this to a post-update method
+		if (entity.isPendingKill) then
+			table.remove(self.entities, i)
+		else
+			i = i + 1
+		end
 	end
 end
 

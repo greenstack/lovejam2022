@@ -5,6 +5,7 @@ Entity = {
 		position = Vector()
 	},
 	components = {},
+	isPendingKill = false,
 }
 
 function Entity:new(name, position, components, obj)
@@ -12,7 +13,7 @@ function Entity:new(name, position, components, obj)
 	setmetatable(obj, self)
 	self.__index = self
 
-	obj.name = name
+	obj.name = name or ""
 	obj.transform = {}
 	obj.transform.position = position or Vector()
 	obj.components = components or {}
@@ -23,6 +24,7 @@ end
 function Entity:update(dt)
 	for _, component in ipairs(self.components) do
 		component:update(self, dt)
+		-- TODO: Enable component removal
 	end
 end
 
@@ -42,6 +44,10 @@ function Entity:getComponent(componentType)
 		end
 	end
 	return nil
+end
+
+function Entity:kill()
+	self.isPendingKill = true
 end
 
 function Entity:__tostring()
