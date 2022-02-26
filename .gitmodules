@@ -1,0 +1,9 @@
+[submodule "baton"]
+	path = baton
+	url = git@github.com:tesselode/baton.git
+[submodule "brinevector"]
+	path = brinevector
+	url = git@github.com:novemberisms/brinevector.git
+[submodule "peachy"]
+	path = peachy
+	url = git@github.com:josh-perry/peachy.git
