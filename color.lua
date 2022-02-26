@@ -10,7 +10,7 @@ function Color:__tostring()
 	return "(R:" .. self.r .. ", G:" .. self.g .. ", B:" .. self.b .. ", A:" .. self.a .. ")"
 end
 
-function Color:values()
+function Color.values(self)
 	return self.r, self.g, self.b, self.a
 end
 

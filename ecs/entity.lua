@@ -1,11 +1,5 @@
 local Vector = require "vendor.brinevector.brinevector"
-local Entity = {
-	type = "Entity",
-	transform = {
-		position = Vector()
-	},
-	components = {},
-}
+local Entity = {}
 setmetatable(Entity, Entity)
 
 function Entity.__call(t, name, position, components)
@@ -23,23 +17,23 @@ function Entity:__tostring()
 	return self.name
 end
 
-function Entity:update(dt)
-	for _, component in ipairs(self.components) do
-		component:update(self, dt)
+function Entity.update(e, dt)
+	for _, component in ipairs(e.components) do
+		component:update(e, dt)
 	end
 end
 
-function Entity:draw()
-	for _, component in ipairs(self.components) do
+function Entity.draw(e)
+	for _, component in ipairs(e.components) do
 		love.graphics.push()
-		love.graphics.translate(self.transform.position.x, self.transform.position.y)
-		component:draw(self)
+		love.graphics.translate(e.transform.position.split())
+		component:draw(e)
 		love.graphics.pop()
 	end
 end
 
-function Entity:getComponent(componentType)
-	for _, component in pairs(self.components) do
+function Entity.getComponent(e, componentType)
+	for _, component in pairs(e.components) do
 		if (component.type == componentType) then
 			return component
 		end
