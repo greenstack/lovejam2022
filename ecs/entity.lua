@@ -1,39 +1,42 @@
 local Vector = require "vendor.brinevector.brinevector"
-local Entity = {}
-setmetatable(Entity, Entity)
+Entity = {
+	type = "Entity",
+	transform = {
+		position = Vector()
+	},
+	components = {},
+}
 
-function Entity.__call(t, name, position, components)
-	return setmetatable({
-		type = "Entity",
-		name = name or "",
-		transform = {
-			position = position or Vector()
-		},
-		components = components or {}
-	}, Entity)
+function Entity:new(name, position, components, obj)
+	obj = obj or {}
+	setmetatable(obj, self)
+	self.__index = self
+
+	obj.name = name
+	obj.transform = {}
+	obj.transform.position = position or Vector()
+	obj.components = components or {}
+
+	return obj
 end
 
-function Entity:__tostring()
-	return self.name
-end
-
-function Entity.update(e, dt)
-	for _, component in ipairs(e.components) do
-		component:update(e, dt)
+function Entity:update(dt)
+	for _, component in ipairs(self.components) do
+		component:update(self, dt)
 	end
 end
 
-function Entity.draw(e)
-	for _, component in ipairs(e.components) do
+function Entity:draw()
+	for _, component in ipairs(self.components) do
 		love.graphics.push()
-		love.graphics.translate(e.transform.position.split())
-		component:draw(e)
+		love.graphics.translate(self.transform.position.x, self.transform.position.y)
+		component:draw(self)
 		love.graphics.pop()
 	end
 end
 
-function Entity.getComponent(e, componentType)
-	for _, component in pairs(e.components) do
+function Entity:getComponent(componentType)
+	for _, component in pairs(self.components) do
 		if (component.type == componentType) then
 			return component
 		end
@@ -41,4 +44,6 @@ function Entity.getComponent(e, componentType)
 	return nil
 end
 
-return Entity
+function Entity:__tostring()
+	return self.name
+end

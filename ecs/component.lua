@@ -18,6 +18,7 @@ function Component:new(componentName, obj)
 	obj = obj or {}
 	setmetatable(obj, self)
 	self.__index = self
+	
 	obj.type = componentName
 	obj.name = getComponentName(componentName)
 
