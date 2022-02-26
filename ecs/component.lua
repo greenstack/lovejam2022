@@ -1,14 +1,37 @@
 Component = {
+	type = "",
 	name = "",
+	enabled = true,
 }
 
-function Component:new(componentName)
-	Obj = Obj or {}
-	setmetatable(Obj, self)
-	self.__index = self
-	Obj.name = componentName
-	return Obj
+local componentRegistry = {}
+
+local function getComponentName(componentType)
+	if componentType == nil then return "" end
+
+	local componentIndex = componentRegistry[componentType] or 0
+	componentRegistry[componentType] = componentIndex + 1
+	return componentType .. "_" .. componentIndex
 end
 
-function Component:update(entity, dt)
+function Component:new(componentName, obj)
+	obj = obj or {}
+	setmetatable(obj, self)
+	self.__index = self
+	obj.type = componentName
+	obj.name = getComponentName(componentName)
+
+	return obj
+end
+
+function Component:update(entity, dt) end
+
+function Component:draw(entity) end
+
+function Component:enable() self.enabled = true end
+
+function Component:disable() self.enabled = false end
+
+function Component:__tostring()
+	return self.name
 end

@@ -12,19 +12,19 @@ function World:new(name)
 end
 
 function World:update(dt)
-	for _, entity in pairs(self.entities) do
+	for _, entity in ipairs(self.entities) do
 		entity:update(dt)
 	end
 end
 
 function World:draw()
-	for _, entity in pairs(self.entities) do
+	for _, entity in ipairs(self.entities) do
 		entity:draw()
 	end
 end
 
 function World:addEntity(entity)
-	if entity.type == nil or entity.type ~= Entity.type then
+	if entity.type == nil or entity.type ~= "Entity" then
 		error("Tried to add non-entity to world")
 	end
 

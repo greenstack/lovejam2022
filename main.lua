@@ -1,5 +1,13 @@
 require "ecs.world"
 
+require "components.render.simpleRectRender"
+require "components.input.playerMovementComponent"
+require "components.player.playerQuakeAbility"
+
+local Vector = require "vendor.brinevector.brinevector"
+local Color = require "color"
+local Entity = require "ecs.entity"
+
 local launchType = arg[2]
 
 DEBUG_MODE = false
@@ -32,6 +40,8 @@ end
 
 local world = World:new("test")
 
+CurrentWorld = world
+
 function love.load()
 	local windowTitle = "Magna and Dude"
 	if DEBUG_MODE then
@@ -41,14 +51,20 @@ function love.load()
 	end
 	love.window.setTitle(windowTitle)
 
-	
+	local playerComponents = {
+		SimpleRectRender:new(Color.Predefined.green),
+		PlayerMovementComponent:new(),
+		PlayerQuakeAbility:new(),
+	}
+
+	world:addEntity(Entity("player", Vector(100, 100), playerComponents))
 end
 
 function love.update(dt)
-	world:update(dt)
+	CurrentWorld:update(dt)
 end
 
 function love.draw()
-	world:draw()
+	CurrentWorld:draw()
 end
 
