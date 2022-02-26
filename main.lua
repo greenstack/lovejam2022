@@ -54,10 +54,10 @@ function love.load()
 	local playerComponents = {
 		SimpleRectRender:new(Color.Predefined.green),
 		PlayerMovementComponent:new(),
-		--PlayerQuakeAbility:new(),
+		PlayerQuakeAbility:new(),
 	}
-
-	world:addEntity(Entity:new("player", Vector(100, 100), playerComponents))
+	local player = Entity:new("player", Vector(100, 100), playerComponents)
+	world:addEntity(player)
 end
 
 function love.update(dt)
