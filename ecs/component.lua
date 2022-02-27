@@ -21,9 +21,22 @@ function Component:new(componentName, obj)
 	
 	obj.type = componentName
 	obj.name = getComponentName(componentName)
+	obj.enabled = true
+	obj._started = false
 
 	return obj
 end
+
+function Component:init(entity)
+	self:start(entity)
+	self._started = true
+end
+
+function Component:Started()
+	return self._started
+end
+
+function Component:start(entity) end
 
 function Component:update(entity, dt) end
 
@@ -32,6 +45,15 @@ function Component:draw(entity) end
 function Component:enable() self.enabled = true end
 
 function Component:disable() self.enabled = false end
+
+function Component:onCollision(entity, collisions) end
+
+function Component:intersectTrigger(entity) end
+
+-- Triggers when either the component or owning entity are destroyed/killed
+function Component:onDestroy() end
+
+function Component:endCollision(entity, collisions) end
 
 function Component:__tostring()
 	return self.name
