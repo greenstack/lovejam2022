@@ -1,12 +1,13 @@
+require "ecs.entity"
 require "ecs.world"
 
+require "components.collision"
 require "components.render.simpleRectRender"
 require "components.input.playerMovementComponent"
 require "components.player.playerQuakeAbility"
 
 local Vector = require "vendor.brinevector.brinevector"
 local Color = require "color"
-require "ecs.entity"
 
 local launchType = arg[2]
 
@@ -57,7 +58,15 @@ function love.load()
 		PlayerQuakeAbility:new(),
 	}
 	local player = Entity:new("player", Vector(100, 100), playerComponents)
+	player:addComponent(CollisionComponent:new(player))
 	world:addEntity(player)
+
+	local enemyComponents = {
+		SimpleRectRender:new(Color.Predefined.yellow),
+	}
+	local enemy = Entity:new("enemy", Vector(150, 100), enemyComponents)
+	enemy:addComponent(CollisionComponent:new(enemy))
+	world:addEntity(enemy)
 end
 
 function love.update(dt)

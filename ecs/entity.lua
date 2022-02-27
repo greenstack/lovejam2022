@@ -6,9 +6,10 @@ Entity = {
 	},
 	components = {},
 	isPendingKill = false,
+	tags = {}
 }
 
-function Entity:new(name, position, components, obj)
+function Entity:new(name, position, components, tags, obj)
 	obj = obj or {}
 	setmetatable(obj, self)
 	self.__index = self
@@ -16,14 +17,23 @@ function Entity:new(name, position, components, obj)
 	obj.name = name or ""
 	obj.transform = {}
 	obj.transform.position = position or Vector()
-	obj.components = components or {}
+	obj.components = {}
+	for _, comp in ipairs(components) do
+		obj:addComponent(comp)
+	end
+	obj.tags = tags or {}
 
 	return obj
 end
 
 function Entity:update(dt)
 	for _, component in ipairs(self.components) do
-		component:update(self, dt)
+		if not component:Started() and component.enabled then
+			component:init(self)
+		end
+		if component.enabled then
+			component:update(self, dt)
+		end
 		-- TODO: Enable component removal
 	end
 end
@@ -46,8 +56,29 @@ function Entity:getComponent(componentType)
 	return nil
 end
 
+function Entity:addComponent(component)
+	component.owner = self
+	table.insert(self.components, component)
+end
+
+function Entity:setTag(tag, value)
+	self.tags[tag] = value
+end
+
+function Entity:intersectTrigger(other)
+	for _, v in pairs(self.components) do
+		v:intersectTrigger(other)
+	end
+end
+
 function Entity:kill()
 	self.isPendingKill = true
+end
+
+function Entity:onDestroy() 
+	for _, comp in pairs(self.components) do
+		comp:onDestroy()
+	end
 end
 
 function Entity:__tostring()

@@ -20,6 +20,9 @@ function Trigger:new(owningEntity, center, radius, obj)
 end
 
 function Trigger:intersectsEntity(entity)
+	-- Owner can't trigger itself
+	if self.owner and self.owner == entity then return end
+	
 	local collider = entity:getComponent("Collider")
 	if collider == nil then
 		return
