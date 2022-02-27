@@ -3,6 +3,7 @@ require "ecs.world"
 
 require "components.collision"
 require "components.render.simpleRectRender"
+require "components.render.spriteRender"
 require "components.input.playerMovementComponent"
 require "components.player.playerQuakeAbility"
 
@@ -53,7 +54,8 @@ function love.load()
 	love.window.setTitle(windowTitle)
 
 	local playerComponents = {
-		SimpleRectRender:new(Color.Predefined.green),
+		--SimpleRectRender:new(Color.Predefined.green),
+		SpriteRender:new("assets/magna.json", "assets/magna.png"),
 		PlayerMovementComponent:new(),
 		PlayerQuakeAbility:new(),
 	}
@@ -67,6 +69,8 @@ function love.load()
 	local enemy = Entity:new("enemy", Vector(150, 100), enemyComponents)
 	enemy:addComponent(CollisionComponent:new(enemy))
 	world:addEntity(enemy)
+
+	-- configure image scaling properties
 end
 
 function love.update(dt)
@@ -74,6 +78,9 @@ function love.update(dt)
 end
 
 function love.draw()
+	love.graphics.push()
+	love.graphics.scale(2, 2)
 	CurrentWorld:draw()
+	love.graphics.pop()
 end
 
