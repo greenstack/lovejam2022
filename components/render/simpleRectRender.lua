@@ -1,4 +1,4 @@
-Color = require "color"
+local Color = require "color"
 require "ecs.component"
 
 SimpleRectRender = Component:new()
