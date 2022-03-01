@@ -13,6 +13,7 @@ function SpriteRender:new(jsonPath, imgPath, color, obj)
   render.xOffset = -render.ing:getWidth() / 2
   render.yOffset = -render.ing:getHeight() / 2
   render.color = color or Color()
+  render.flipHorizontal = false
 
   return render
 end
@@ -22,5 +23,21 @@ function SpriteRender:update(entity, dt)
 end
 
 function SpriteRender:draw(entity)
+  love.graphics.push()
+
+  local xScale = 1
+  if self.flipHorizontal then
+    xScale = -1
+  end
+  love.graphics.scale(xScale, 1)
   self.ing:draw(self.xOffset, self.yOffset)
+  love.graphics.pop()
+end
+
+function SpriteRender:setTag(tagName)
+  self.ing:setTag(tagName)
+end
+
+function SpriteRender:getTag()
+  return self.ing.tagName
 end
