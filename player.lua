@@ -37,7 +37,7 @@ function Player:update(dt)
 	if self.earthquake == nil or self.earthquake.isPendingKill then
 		input:update()
 		local x, y = input:get 'move'
-		self.collider:applyForce(Vector(x, y) * 25)
+		self.collider:applyForce(Vector(x, y) * 150)
 		-- Kill the earthquake if necessary
 		if self.earthquake ~= nil then
 			self.earthquake = nil

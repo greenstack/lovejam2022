@@ -51,7 +51,9 @@ function love.errorhandler(msg)
 	end
 end
 
-local world = World:new("test")
+local world = World:new("test", "assets/map1.lua", 16)
+local player
+local windowX, windowY = love.graphics.getDimensions()
 
 CurrentWorld = world
 
@@ -68,7 +70,7 @@ function love.load()
 		SpriteRender:new("assets/magna.json", "assets/magna.png"),
 		--PlayerQuakeAbility:new(),
 	}
-	local player = Player:new(Vector(100, 100), playerComponents)
+	player = Player:new(Vector(100, 100), playerComponents)
 	world:addEntity(player)
 
 	local enemyComponents = {
@@ -96,7 +98,8 @@ end
 
 function love.draw()
 	love.graphics.push()
-	love.graphics.scale(2, 2)
+	love.graphics.translate(-player.transform.position.x + windowX / 2, -player.transform.position.y + windowY / 2)
+	love.graphics.scale(2.5, 2.5)
 	CurrentWorld:draw()
 	love.graphics.pop()
 end

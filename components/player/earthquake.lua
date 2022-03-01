@@ -40,7 +40,7 @@ function Shockwave:intersectTrigger(entity)
 	if entity == self.owningEntity then return end
 	local collision = entity:getComponent("Collider")
 	local vec2other = entity.transform.position - self.owningEntity.transform.position
-	collision:applyForce(vec2other.normalized * 100)
+	collision:applyForce(vec2other.normalized * 2400)
 end
 
 function Shockwave:draw(entity)

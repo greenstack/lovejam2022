@@ -1,4 +1,4 @@
---local Breezefield = require "vendor.breezefield.init"
+local Cartographer = require "vendor.cartographer.cartographer"
 
 World = {
 	entities = {},
@@ -7,21 +7,40 @@ World = {
 	triggers = {},
 }
 
-function World:new(name, Obj)
-	Obj = Obj or {}
-	setmetatable(Obj, self)
+function World:new(name, mapPath, tileSize, obj)
+	obj = obj or {}
+	setmetatable(obj, self)
 	self.__index = self
 	self.name = name
 
-	love.physics.setMeter(64)
-
+	-- Set up the physical world
+	love.physics.setMeter(tileSize)
 	self.physicsWorld = love.physics.newWorld(0, 0, true)
 
-	return Obj
+	-- Set up the map
+	self.map = Cartographer.load(mapPath)
+	self:_initBlockingLayer(tileSize)
+
+	return obj
+end
+
+function World:_initBlockingLayer(tileWidth, tileHeight)
+	tileHeight = tileHeight or tileWidth
+	for _, _, _, _, pixelX, pixelY in self.map.layers.blocking:getTiles() do
+		local obstacleBody = love.physics.newBody(
+			self.physicsWorld,
+			pixelX + tileWidth / 2,
+			pixelY + tileHeight / 2,
+			"static"
+		)
+		local obstacleShape = love.physics.newRectangleShape(tileWidth, tileHeight)
+		love.physics.newFixture(obstacleBody, obstacleShape)
+	end
 end
 
 function World:update(dt)
 	self.physicsWorld:update(dt)
+	self.map:update(dt)
 
 	local ei=1
 	while ei <= #self.entities do
@@ -54,6 +73,7 @@ function World:update(dt)
 end
 
 function World:draw()
+	self.map:draw()
 	for _, entity in ipairs(self.entities) do
 		entity:draw()
 	end
