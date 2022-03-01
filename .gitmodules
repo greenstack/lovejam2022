@@ -7,3 +7,6 @@
 [submodule "peachy"]
 	path = peachy
 	url = git@github.com:josh-perry/peachy.git
+[submodule "cartographer"]
+	path = cartographer
+	url = git@github.com:greenstack/cartographer.git
