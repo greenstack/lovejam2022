@@ -66,12 +66,9 @@ function love.load()
 	end
 	love.window.setTitle(windowTitle)
 
-	local playerComponents = {
-		SpriteRender:new("assets/magna.json", "assets/magna.png"),
-		--PlayerQuakeAbility:new(),
-	}
-	player = Player:new(Vector(100, 100), playerComponents)
+	player = Player:new(Vector(100, 100))
 	world:addEntity(player)
+	world:setPlayer(player)
 
 	local enemyComponents = {
 		SimpleRectRender:new(Color.Predefined.yellow),
@@ -97,10 +94,6 @@ function love.update(dt)
 end
 
 function love.draw()
-	love.graphics.push()
-	love.graphics.translate(-player.transform.position.x + windowX / 2, -player.transform.position.y + windowY / 2)
-	love.graphics.scale(2.5, 2.5)
 	CurrentWorld:draw()
-	love.graphics.pop()
 end
 
