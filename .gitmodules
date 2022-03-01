@@ -8,5 +8,5 @@
 	path = peachy
 	url = git@github.com:josh-perry/peachy.git
 [submodule "cartographer"]
-	path = cartographer
+	path = vendor/cartographer
 	url = git@github.com:greenstack/cartographer.git
