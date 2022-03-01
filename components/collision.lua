@@ -4,14 +4,17 @@ local Vector = require "vendor.brinevector.brinevector"
 
 CollisionComponent = Component:new()
 
-function CollisionComponent:new(entity, bodyType, obj)
+function CollisionComponent:new(entity, bodyType, world, mass, obj)
 	local collider = Component.new(self, "Collider", obj)
 
-	local valid = entity or error("Cannot set up collider without an entity")
-	collider.body = love.physics.newBody(CurrentWorld.physicsWorld, entity.transform.position.x, entity.transform.position.y, bodyType or "dynamic")
+	local currentWorld = world or CurrentWorld
+	--assert(entity, error("Cannot set up collider without an entity"))
+	--assert(currentWorld, "World not set up")
+
+	collider.body = love.physics.newBody(currentWorld.physicsWorld, entity.transform.position.x, entity.transform.position.y, bodyType or "dynamic")
 	collider.body:setLinearDamping(8)
 	collider.shape = love.physics.newCircleShape(6)
-	collider.fixture = love.physics.newFixture(collider.body, collider.shape, 1)
+	collider.fixture = love.physics.newFixture(collider.body, collider.shape, mass or 1)
 
 	return collider
 end

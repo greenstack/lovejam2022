@@ -1,5 +1,9 @@
+require "components.health"
+require "components.crystal"
+
 local Cartographer = require "vendor.cartographer.cartographer"
 local Gamera = require "vendor.gamera.gamera"
+local Vector = require "vendor.brinevector.brinevector"
 
 World = {
 	entities = {},
@@ -21,7 +25,8 @@ function World:new(name, mapPath, tileSize, obj)
 	-- Set up the map
 	self.map = Cartographer.load(mapPath)
 	self:_initBlockingLayer(tileSize)
-	
+	self:_initCrystalLayer(tileSize)
+
 	self.camera = Gamera.new(self.map.layers.blocking:getPixelBounds())
 	self.camera:setScale(2.5)
 	return obj
@@ -45,6 +50,37 @@ function World:_initBlockingLayer(tileWidth, tileHeight)
 	end
 end
 
+function World:_initCrystalLayer(tileSize)
+	-- Going to need all this data I think
+	local crystalCount = 1
+	for _, _, _, _, pixelX, pixelY in self.map.layers.crystals:getTiles() do
+		-- Set up the crystal blocking
+		local obstacleBody = love.physics.newBody(
+			self.physicsWorld,
+			pixelX + tileSize / 2,
+			pixelY + tileSize / 2,
+			"static"
+		)
+		local obstacleShape = love.physics.newRectangleShape(tileSize, tileSize)
+		love.physics.newFixture(obstacleBody, obstacleShape)
+		-- Set up the crystal entities
+		local crystal = Entity:new("crytal_" .. crystalCount,
+			-- Because of collision stuff, the collisions aren't in the right
+			-- place! TODO: Fix this!
+			-- TODO: When all crystals are destroyed, game over!
+			Vector(pixelX + 8, pixelY + 12),
+		{
+			HealthComponent:new(3),
+			Crystal:new(),
+		}, {
+			crystal = true
+		})
+		crystal:addComponent(CollisionComponent:new(crystal, "dynamic", self, 1000000000))
+		crystalCount = crystalCount + 1
+		World:addEntity(crystal)
+	end
+end
+
 function World:update(dt)
 	self.physicsWorld:update(dt)
 	self.map:update(dt)
@@ -63,22 +99,41 @@ function World:update(dt)
 		end
 		-- Check if entity is in any triggers
 
-		local ti = 1
-		while ti <= #self.triggers do
-			local trigger = self.triggers[ti]
-			-- some triggers will be removed
-			if trigger.isPendingKill then
-				table.remove(self.triggers, ti)
-			else
-				if (trigger:intersectsEntity(entity)) then
-					trigger.owner:intersectTrigger(entity)
-				end
-				ti = ti + 1
-			end
-		end
+		self:updateTriggers(dt, entity)
 	end
 
 	self.camera:setPosition(self.player.transform.position.x, self.player.transform.position.y)
+end
+
+function World:updateTriggers(dt, entity)
+	local ti = 1
+	while ti <= #self.triggers do
+		local trigger = self.triggers[ti]
+		-- some triggers will be removed
+		if trigger.isPendingKill then
+			table.remove(self.triggers, ti)
+		else
+			-- TODO: When you come back to this, you're trying to get "start intersect"
+			-- and "end intersect" triggers working. Also, this seems a bit backwards,
+			-- but oh well.
+
+			-- It should be entity:startIntersection(trigger)
+			-- entity:continueIntersection(trigger)
+			-- entity:endIntersection(trigger)
+			if (trigger:intersectsEntity(entity)) then
+				if entity:getTag("intersecting") == false then
+					trigger.owner:intersectTrigger(entity, true)
+					entity:setTag("intersecting", true)
+				else
+					trigger.owner:intersectTrigger(entity, false)
+				end
+			else
+				-- TODO: End intersection trigger?
+				entity:setTag("intersecting", false)
+			end
+			ti = ti + 1
+		end
+	end
 end
 
 function World:draw()

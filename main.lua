@@ -53,7 +53,6 @@ end
 
 local world = World:new("test", "assets/map1.lua", 16)
 local player
-local windowX, windowY = love.graphics.getDimensions()
 
 CurrentWorld = world
 
@@ -76,8 +75,6 @@ function love.load()
 	local enemy = Entity:new("enemy", Vector(150, 100), enemyComponents)
 	enemy:addComponent(CollisionComponent:new(enemy))
 	world:addEntity(enemy)
-
-	-- configure image scaling properties
 end
 
 function love.update(dt)

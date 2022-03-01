@@ -44,6 +44,21 @@ end
 
 function Entity:draw()
 	self:drawComponents()
+	--self:drawDebug()
+end
+
+function Entity:drawDebug()
+	if DEBUG_MODE and DRAW_DEBUG then
+		-- calculate string length
+		-- draw it where the entity is
+		love.graphics.printf(
+			self:__tostring(), 
+			0, --self.transform.position.x,
+			0, --self.transform.position.y,
+			100,
+			"center"
+		)
+	end
 end
 
 function Entity:drawComponents()
@@ -73,9 +88,13 @@ function Entity:setTag(tag, value)
 	self.tags[tag] = value
 end
 
-function Entity:intersectTrigger(other)
+function Entity:getTag(tag)
+	return self.tags[tag]
+end
+
+function Entity:intersectTrigger(other, startThisFrame)
 	for _, v in pairs(self.components) do
-		v:intersectTrigger(other)
+		v:intersectTrigger(other, startThisFrame)
 	end
 end
 
