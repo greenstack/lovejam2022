@@ -18,7 +18,7 @@ function Entity:new(name, position, components, tags, obj)
 	obj.transform = {}
 	obj.transform.position = position or Vector()
 	obj.components = {}
-	for _, comp in ipairs(components) do
+	for _, comp in ipairs(components or {}) do
 		obj:addComponent(comp)
 	end
 	obj.tags = tags or {}
@@ -27,6 +27,10 @@ function Entity:new(name, position, components, tags, obj)
 end
 
 function Entity:update(dt)
+	self:updateComponents(dt)
+end
+
+function Entity:updateComponents(dt)
 	for _, component in ipairs(self.components) do
 		if not component:Started() and component.enabled then
 			component:init(self)
@@ -39,6 +43,10 @@ function Entity:update(dt)
 end
 
 function Entity:draw()
+	self:drawComponents()
+end
+
+function Entity:drawComponents()
 	for _, component in ipairs(self.components) do
 		love.graphics.push()
 		love.graphics.translate(self.transform.position.x, self.transform.position.y)
