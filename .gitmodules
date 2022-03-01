@@ -10,3 +10,6 @@
 [submodule "cartographer"]
 	path = vendor/cartographer
 	url = git@github.com:greenstack/cartographer.git
+[submodule "vendor/gamera"]
+	path = vendor/gamera
+	url = git@github.com:kikito/gamera.git
