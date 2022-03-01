@@ -10,6 +10,8 @@ function SpriteRender:new(jsonPath, imgPath, color, obj)
   local image  = love.graphics.newImage(imgPath)
   image:setFilter("nearest", "nearest")
   render.ing = peachy.new(jsonPath, image, "idle")
+  render.xOffset = -render.ing:getWidth() / 2
+  render.yOffset = -render.ing:getHeight() / 2
   render.color = color or Color()
 
   return render
@@ -20,5 +22,5 @@ function SpriteRender:update(entity, dt)
 end
 
 function SpriteRender:draw(entity)
-  self.ing:draw(-8, -8)
+  self.ing:draw(self.xOffset, self.yOffset)
 end
