@@ -1,4 +1,5 @@
 local Cartographer = require "vendor.cartographer.cartographer"
+local Gamera = require "vendor.gamera.gamera"
 
 World = {
 	entities = {},
@@ -16,12 +17,18 @@ function World:new(name, mapPath, tileSize, obj)
 	-- Set up the physical world
 	love.physics.setMeter(tileSize)
 	self.physicsWorld = love.physics.newWorld(0, 0, true)
-
+	
 	-- Set up the map
 	self.map = Cartographer.load(mapPath)
 	self:_initBlockingLayer(tileSize)
-
+	
+	self.camera = Gamera.new(self.map.layers.blocking:getPixelBounds())
+	self.camera:setScale(2.5)
 	return obj
+end
+
+function World:setPlayer(player)
+	self.player = player
 end
 
 function World:_initBlockingLayer(tileWidth, tileHeight)
@@ -70,10 +77,24 @@ function World:update(dt)
 			end
 		end
 	end
+
+	self.camera:setPosition(self.player.transform.position.x, self.player.transform.position.y)
 end
 
 function World:draw()
+	self.camera:draw(function() self:drawAll() end)
+end
+
+function World:drawAll()
+	self:drawMap()
+	self:drawEntities()
+end
+
+function World:drawMap()
 	self.map:draw()
+end
+
+function World:drawEntities()
 	for _, entity in ipairs(self.entities) do
 		entity:draw()
 	end
