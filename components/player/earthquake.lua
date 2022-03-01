@@ -13,13 +13,13 @@ function Shockwave:new(player, owner, startRadius, endRadius, obj)
 	eq.expansionRate = 100
 	eq.owningEntity = player or error("owningEntity cannot be nil")
 
-	eq.playerMovement = eq.owningEntity:getComponent("PlayerControllerComponent")
+	--eq.playerMovement = eq.owningEntity:getComponent("PlayerControllerComponent")
 
 	eq.trigger = Trigger:new(owner, owner.transform.position, startRadius)
 	CurrentWorld:addTrigger(eq.trigger)
 	
-	eq.playerMovement:stop()
-	eq.playerMovement:disable()
+	--eq.playerMovement:stop()
+	--eq.playerMovement:disable()
 
 	return eq;
 end
@@ -48,6 +48,6 @@ function Shockwave:draw(entity)
 end
 
 function Shockwave:onDestroy()
-	self.playerMovement:enable()
+	--self.playerMovement:enable()
 	self.trigger.isPendingKill = true
 end
