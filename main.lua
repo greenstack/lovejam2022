@@ -4,11 +4,13 @@ require "ecs.world"
 require "components.collision"
 require "components.render.simpleRectRender"
 require "components.render.spriteRender"
-require "components.input.playerMovementComponent"
 require "components.player.playerQuakeAbility"
+
+require "player"
 
 local Vector = require "vendor.brinevector.brinevector"
 local Color = require "color"
+local Baton = require "vendor.baton.baton"
 
 local launchType = arg[2]
 
@@ -16,18 +18,27 @@ DEBUG_MODE = false
 TEST_MODE = false
 RELEASE = false
 
+local debugControls = nil
+
 if launchType == "test" or launchType == "debug" then
 	require "lldebugger"
 	DEBUG_MODE = true
 
 	if launchType == "debug" then
 		lldebugger.start()
+		debugControls = Baton.new
+		{
+			controls = {
+				drawDebug = {'key:f12'},
+			}
+		}
 	else
 		TEST_MODE = true
 	end
 else
 	RELEASE = true
 end
+
 
 local love_errorhandler = love.errhand
 
@@ -46,21 +57,18 @@ CurrentWorld = world
 
 function love.load()
 	local windowTitle = "Magna and Dude"
-	if DEBUG_MODE then
-		windowTitle = windowTitle .. " (Debug)"
-	elseif TEST_MODE then
+	if TEST_MODE then
 		windowTitle = windowTitle .. " (Test)"
+	elseif DEBUG_MODE then
+		windowTitle = windowTitle .. " (Debug)"
 	end
 	love.window.setTitle(windowTitle)
 
 	local playerComponents = {
-		--SimpleRectRender:new(Color.Predefined.green),
 		SpriteRender:new("assets/magna.json", "assets/magna.png"),
-		PlayerMovementComponent:new(),
 		PlayerQuakeAbility:new(),
 	}
-	local player = Entity:new("player", Vector(100, 100), playerComponents)
-	player:addComponent(CollisionComponent:new(player))
+	local player = Player:new(Vector(100, 100), playerComponents)
 	world:addEntity(player)
 
 	local enemyComponents = {
@@ -74,6 +82,15 @@ function love.load()
 end
 
 function love.update(dt)
+	if debugControls then
+		debugControls:update()
+
+		-- Toggles debug drawing
+		if debugControls:pressed("drawDebug") then
+			DRAW_DEBUG = not DRAW_DEBUG
+		end
+	end
+
 	CurrentWorld:update(dt)
 end
 
