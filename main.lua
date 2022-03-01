@@ -66,7 +66,7 @@ function love.load()
 
 	local playerComponents = {
 		SpriteRender:new("assets/magna.json", "assets/magna.png"),
-		PlayerQuakeAbility:new(),
+		--PlayerQuakeAbility:new(),
 	}
 	local player = Player:new(Vector(100, 100), playerComponents)
 	world:addEntity(player)
