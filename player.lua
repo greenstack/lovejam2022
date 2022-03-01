@@ -4,6 +4,7 @@ require "components.player.earthquake"
 
 local Baton = require "vendor.baton.baton"
 local Vector = require "vendor.brinevector.brinevector"
+require "util.math"
 
 Player = Entity:new()
 
@@ -26,10 +27,14 @@ function Player:new(position, components, tags, obj)
 	local player = Entity.new(self, "player", position, components, tags, obj)
 
 	local playerCollision = CollisionComponent:new(player)
-	player.actionQueued = false
-
-	player:addComponent(playerCollision)
 	self.collider = playerCollision
+	player:addComponent(playerCollision)
+	
+	player.facing = 1
+	player.render = SpriteRender:new("assets/magna.json", "assets/magna.png")
+	player:addComponent(player.render)
+	
+	player.actionQueued = false
 	return player
 end
 
@@ -37,13 +42,24 @@ function Player:update(dt)
 	if self.earthquake == nil or self.earthquake.isPendingKill then
 		input:update()
 		local x, y = input:get 'move'
-		self.collider:applyForce(Vector(x, y) * 150)
+		self.collider:applyForce(Vector(x, y) * 200)
 		-- Kill the earthquake if necessary
 		if self.earthquake ~= nil then
 			self.earthquake = nil
 		end
 	end
 
+	local velocity = Vector(self.collider.body:getLinearVelocity())
+	local speed = velocity.length
+
+	-- 16 seems to be the magic number for when to switch between run and idle
+	if speed > 16 then
+		self.render:setTag("run")
+		self.render.flipHorizontal = gs.math.sign(velocity.x) == -1
+		
+	else
+		self.render:setTag("idle")
+	end
 
 	-- update collision and such
 	self:updateComponents(dt)
