@@ -1,5 +1,6 @@
 require "components.health"
 require "components.crystal"
+require "components.evilCrystal"
 
 local Cartographer = require "vendor.cartographer.cartographer"
 local Gamera = require "vendor.gamera.gamera"
@@ -55,15 +56,6 @@ function World:_initCrystalLayer(tileSize)
 	-- Going to need all this data I think
 	local crystalCount = 0
 	for tileIndex, globalId, gridX, gridY, pixelX, pixelY in self.map.layers.crystals:getTiles() do
-		-- Set up the crystal blocking
-		local obstacleBody = love.physics.newBody(
-			self.physicsWorld,
-			pixelX + tileSize / 2,
-			pixelY + tileSize / 2,
-			"static"
-		)
-		
-
 		local healthComp = HealthComponent:new(3)
 		healthComp:registerDeathListener(function(comp) self:onGoodCrystalDead(comp) end)
 		-- Set up the good crystal entities
@@ -89,7 +81,25 @@ function World:_initCrystalLayer(tileSize)
 end
 
 function World:_initEvilCrystals(tileSize)
-
+	local evilCrystalCount = 0
+	for _, _, _, _, pixelX, pixelY in self.map.layers.evilCrystals:getTiles() do
+		local healthComp = HealthComponent:new(3)
+		healthComp:registerDeathListener(function(comp) self:onEvilCrystalDead(comp) end)
+		local crystal = Entity:new("evilCrystal_" .. evilCrystalCount,
+			Vector(pixelX + 8, pixelX + 8),
+			{
+				healthComp,
+				SpriteRender:new("assets/sprites/evil_crystal.json", "assets/sprites/evil_crystal.png", "spin_full_hp"),
+				EvilCrystal:new(),
+			},
+			{
+				crystal = true,
+			}
+		)
+		crystal:addComponent(CollisionComponent:new(crystal, "static", self, 1000000))
+		self:addEntity(crystal)
+	end
+	self.evilCrystalCount = evilCrystalCount
 end
 
 function World:update(dt)
@@ -182,5 +192,12 @@ function World:onGoodCrystalDead(healthComp)
 	self.crystalCount = self.crystalCount - 1
 	if self.crystalCount <= 0 then
 		error("game over!")
+	end
+end
+
+function World:onEvilCrystalDead(healthComp)
+	self.evilCrystalCount = self.evilCrystalCount - 1
+	if self.evilCrystalCount <= 0 then
+		error("you win - for now")
 	end
 end
