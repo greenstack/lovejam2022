@@ -31,7 +31,7 @@ function Player:new(position, components, tags, obj)
 	player:addComponent(playerCollision)
 	
 	player.facing = 1
-	player.render = SpriteRender:new("assets/magna.json", "assets/magna.png")
+	player.render = SpriteRender:new("assets/sprites/magna.json", "assets/sprites/magna.png", "idle")
 	player:addComponent(player.render)
 	
 	player.actionQueued = false

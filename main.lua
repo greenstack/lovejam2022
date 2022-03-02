@@ -9,7 +9,6 @@ require "components.player.playerQuakeAbility"
 require "player"
 
 local Vector = require "vendor.brinevector.brinevector"
-local Color = require "color"
 local Baton = require "vendor.baton.baton"
 
 local launchType = arg[2]
@@ -70,7 +69,7 @@ function love.load()
 	world:setPlayer(player)
 
 	local enemyComponents = {
-		SimpleRectRender:new(Color.Predefined.yellow),
+		SpriteRender:new("assets/sprites/craggy.json", "assets/sprites/craggy.png", "default")
 	}
 	local enemy = Entity:new("enemy", Vector(150, 100), enemyComponents)
 	enemy:addComponent(CollisionComponent:new(enemy))

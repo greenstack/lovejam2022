@@ -5,11 +5,11 @@ local Color = require "color"
 
 SpriteRender = Component:new()
 
-function SpriteRender:new(jsonPath, imgPath, color, obj)
+function SpriteRender:new(jsonPath, imgPath, initialTag, color, obj)
   local render = Component.new(self, "SpriteRender", obj)
   local image  = love.graphics.newImage(imgPath)
   image:setFilter("nearest", "nearest")
-  render.ing = peachy.new(jsonPath, image, "idle")
+  render.ing = peachy.new(jsonPath, image, initialTag)
   render.xOffset = -render.ing:getWidth() / 2
   render.yOffset = -render.ing:getHeight() / 2
   render.color = color or Color()
