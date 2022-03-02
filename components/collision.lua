@@ -4,7 +4,7 @@ local Vector = require "vendor.brinevector.brinevector"
 
 CollisionComponent = Component:new()
 
-function CollisionComponent:new(entity, bodyType, world, mass, obj)
+function CollisionComponent:new(entity, bodyType, world, mass, destroyColliderOnDestroy, obj)
 	local collider = Component.new(self, "Collider", obj)
 
 	local currentWorld = world or CurrentWorld
@@ -15,6 +15,11 @@ function CollisionComponent:new(entity, bodyType, world, mass, obj)
 	collider.body:setLinearDamping(8)
 	collider.shape = love.physics.newCircleShape(6)
 	collider.fixture = love.physics.newFixture(collider.body, collider.shape, mass or 1)
+	if destroyColliderOnDestroy ~= nil then
+		collider.destroyColliderOnDestroy = destroyColliderOnDestroy
+	else
+		collider.destroyColliderOnDestroy = true
+	end
 
 	return collider
 end
@@ -34,4 +39,11 @@ end
 
 function CollisionComponent:applyForce(vector)
 	self.body:applyForce(vector:split())
+end
+
+function CollisionComponent:onDestroy()
+	if self.destroyColliderOnDestroy then
+		self.body:destroy()
+		self.body = nil
+	end
 end
