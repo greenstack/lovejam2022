@@ -2,9 +2,12 @@ require "ecs.component"
 
 Crystal = Component:new()
 
-function Crystal:new(obj)
+function Crystal:new(tileIndex, tileId, gridX, gridY, obj)
 	local crystal = Component.new(self, "Crystal", obj)
-
+	crystal.tileIndex = tileIndex
+	crystal.tileId = tileId
+	crystal.gridX = gridX
+	crystal.gridY = gridY
 	return crystal
 end
 
@@ -16,10 +19,15 @@ end
 function Crystal:intersectTrigger(entity, startThisFrame)
 	if startThisFrame then
 		self.healthPool:loseHealth(1)
+		CurrentWorld.map.layers.crystals:setTileAtGridPosition(
+			self.gridX,
+			self.gridY,
+			CurrentWorld.map.layers.crystals.data[self.tileIndex] + 1
+		)
 	end
-	-- TODO: set sprite according to damage
 end
 
 function Crystal:die() 
 	--TODO: implement this
+	self.owner:kill()
 end
