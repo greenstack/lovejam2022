@@ -26,6 +26,7 @@ function World:new(name, mapPath, tileSize, obj)
 	self.map = Cartographer.load(mapPath)
 	self:_initBlockingLayer(tileSize)
 	self:_initCrystalLayer(tileSize)
+	self:_initEvilCrystals(tileSize)
 
 	self.camera = Gamera.new(self.map.layers.blocking:getPixelBounds())
 	self.camera:setScale(2.5)
@@ -52,8 +53,8 @@ end
 
 function World:_initCrystalLayer(tileSize)
 	-- Going to need all this data I think
-	local crystalCount = 1
-	for _, _, _, _, pixelX, pixelY in self.map.layers.crystals:getTiles() do
+	local crystalCount = 0
+	for tileIndex, globalId, gridX, gridY, pixelX, pixelY in self.map.layers.crystals:getTiles() do
 		-- Set up the crystal blocking
 		local obstacleBody = love.physics.newBody(
 			self.physicsWorld,
@@ -61,24 +62,34 @@ function World:_initCrystalLayer(tileSize)
 			pixelY + tileSize / 2,
 			"static"
 		)
-		local obstacleShape = love.physics.newRectangleShape(tileSize, tileSize)
-		love.physics.newFixture(obstacleBody, obstacleShape)
-		-- Set up the crystal entities
+		
+
+		local healthComp = HealthComponent:new(3)
+		healthComp:registerDeathListener(function(comp) self:onGoodCrystalDead(comp) end)
+		-- Set up the good crystal entities
 		local crystal = Entity:new("crytal_" .. crystalCount,
 			-- Because of collision stuff, the collisions aren't in the right
 			-- place! TODO: Fix this!
 			-- TODO: When all crystals are destroyed, game over!
-			Vector(pixelX + 8, pixelY + 12),
-		{
-			HealthComponent:new(3),
-			Crystal:new(),
-		}, {
-			crystal = true
-		})
-		crystal:addComponent(CollisionComponent:new(crystal, "dynamic", self, 1000000000))
+			Vector(pixelX + 8, pixelY + 8),
+			{
+				healthComp,
+				Crystal:new(tileIndex, globalId, gridX, gridY),
+			},
+			{
+				crystal = true,
+			}
+		)
+
+		crystal:addComponent(CollisionComponent:new(crystal, "static", self, 1000000000, false))
 		crystalCount = crystalCount + 1
-		World:addEntity(crystal)
+		self:addEntity(crystal)
 	end
+	self.crystalCount = crystalCount
+end
+
+function World:_initEvilCrystals(tileSize)
+
 end
 
 function World:update(dt)
@@ -113,10 +124,6 @@ function World:updateTriggers(dt, entity)
 		if trigger.isPendingKill then
 			table.remove(self.triggers, ti)
 		else
-			-- TODO: When you come back to this, you're trying to get "start intersect"
-			-- and "end intersect" triggers working. Also, this seems a bit backwards,
-			-- but oh well.
-
 			-- It should be entity:startIntersection(trigger)
 			-- entity:continueIntersection(trigger)
 			-- entity:endIntersection(trigger)
@@ -169,4 +176,11 @@ end
 
 function World:__tostring()
 	return self.name
+end
+
+function World:onGoodCrystalDead(healthComp)
+	self.crystalCount = self.crystalCount - 1
+	if self.crystalCount <= 0 then
+		error("game over!")
+	end
 end
