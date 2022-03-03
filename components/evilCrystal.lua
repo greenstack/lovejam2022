@@ -115,18 +115,17 @@ function EvilCrystal:intersectTrigger(entity, startThisFrame)
     elseif self.healthPool:getCurrent() == 1 then
       self.render:setTag("spin_critical")
     end
-	end
 
-  -- now to warp to a valid location for safety's sake
-  local nextWarp = CurrentWorld.warpSpots[love.math.random(#CurrentWorld.warpSpots)]
-  repeat
-    if nextWarp:isOccupied() then
+    print "trying to warp"
+    -- now to warp to a valid location for safety's sake
+    local nextWarp = CurrentWorld.warpSpots[love.math.random(#CurrentWorld.warpSpots)]
+    while nextWarp:isOccupied() do
+      print "warp was occupied"
       nextWarp = CurrentWorld.warpSpots[love.math.random(#CurrentWorld.warpSpots)]
-    else
-      self:setWarpLocation(nextWarp)
     end
-  until nextWarp == self.warpSpot
-
+    self:setWarpLocation(nextWarp)
+    
+	end
 end
 
 function EvilCrystal:setWarpLocation(warpSpot)
@@ -134,4 +133,5 @@ function EvilCrystal:setWarpLocation(warpSpot)
   self.warpSpot = warpSpot
   warpSpot.crystal = self
   self.owner.transform.position = warpSpot.position
+  self.owner:getComponent("Collider").body:setPosition(warpSpot.position:split())
 end
