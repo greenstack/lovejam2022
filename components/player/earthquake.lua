@@ -15,7 +15,7 @@ function Shockwave:new(player, owner, startRadius, endRadius, obj)
 
 	eq.trigger = Trigger:new(owner, owner.transform.position, startRadius)
 	CurrentWorld:addTrigger(eq.trigger)
-	
+
 	return eq;
 end
 
@@ -34,7 +34,10 @@ end
 function Shockwave:intersectTrigger(entity, startThisFrame)
 	if entity == self.owningEntity then return end
 	if entity:getTag("crystal") then
-		local crystal = entity:getComponent("Crystal")
+		local crystal = entity:getComponent("Crystal") 
+		if crystal == nil then 
+			crystal = entity:getComponent("EvilCrystal")
+		end
 		crystal:intersectTrigger(self, startThisFrame)
 		return
 	end

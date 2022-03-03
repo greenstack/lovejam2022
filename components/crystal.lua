@@ -28,6 +28,5 @@ function Crystal:intersectTrigger(entity, startThisFrame)
 end
 
 function Crystal:die() 
-	--TODO: implement this
 	self.owner:kill()
 end
