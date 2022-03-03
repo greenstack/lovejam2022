@@ -27,7 +27,8 @@ function World:new(name, mapPath, tileSize, obj)
 	self.map = Cartographer.load(mapPath)
 	self:_initBlockingLayer(tileSize)
 	self:_initCrystalLayer(tileSize)
-	self:_initEvilCrystals(tileSize)
+	--self:_initEvilCrystals(tileSize)
+	self:_initEvilCrystalWarps()
 
 	self.camera = Gamera.new(self.map.layers.blocking:getPixelBounds())
 	self.camera:setScale(2.5)
@@ -86,7 +87,7 @@ function World:_initEvilCrystals(tileSize)
 		local healthComp = HealthComponent:new(3)
 		healthComp:registerDeathListener(function(comp) self:onEvilCrystalDead(comp) end)
 		local crystal = Entity:new("evilCrystal_" .. evilCrystalCount,
-			Vector(pixelX + 8, pixelX + 8),
+			Vector(pixelX + 8, pixelY + 8),
 			{
 				healthComp,
 				SpriteRender:new("assets/sprites/evil_crystal.json", "assets/sprites/evil_crystal.png", "spin_full_hp"),
@@ -98,6 +99,46 @@ function World:_initEvilCrystals(tileSize)
 		)
 		crystal:addComponent(CollisionComponent:new(crystal, "static", self, 1000000))
 		self:addEntity(crystal)
+	end
+	self.evilCrystalCount = evilCrystalCount
+end
+
+function World:_initEvilCrystalWarps()
+	local warpSpotCount = 0
+	self.warpSpots = {}
+	local evilCrystalCount = 0
+	for _, gid, gridX, gridY, pixelX, pixelY in self.map.layers.evilCrystalWarpPoints:getTiles() do
+		if gid == 0 then goto continue end
+		warpSpotCount = warpSpotCount + 1
+		local warpSpot = {
+			position = Vector(pixelX + 8, pixelY + 8),
+			crystal = nil,
+			isOccupied = function(warpSpot) return warpSpot.crystal ~= nil end,
+		}
+		-- add a spot
+		table.insert(self.warpSpots, warpSpot)
+
+		-- If this spot also has a crystal here at the start, create it
+		print(string.format("gridX: %d; gridY: %d, tileId: %d", gridX, gridY, self.map.layers.evilCrystals:getTileAtGridPosition(gridX, gridY) or 0))
+		if self.map.layers.evilCrystals:getTileAtGridPosition(gridX, gridY) then
+			local healthComp = HealthComponent:new(3)
+			healthComp:registerDeathListener(function(comp) self:onEvilCrystalDead(comp) end)
+			local crystal = Entity:new("evilCrystal_" .. evilCrystalCount,
+				Vector(pixelX + 8, pixelY + 8),
+				{
+					healthComp,
+					SpriteRender:new("assets/sprites/evil_crystal.json", "assets/sprites/evil_crystal.png", "spin_full_hp"),
+					EvilCrystal:new(warpSpot),
+				},
+				{
+					crystal = true,
+				}
+			)
+			crystal:addComponent(CollisionComponent:new(crystal, "static", self, 1000000))
+			self:addEntity(crystal)
+		end
+
+		::continue::
 	end
 	self.evilCrystalCount = evilCrystalCount
 end
