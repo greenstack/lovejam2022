@@ -253,6 +253,7 @@ function World:onEvilCrystalDead(healthComp)
 	if self.evilCrystalCount <= 0 then
 		self:spawnEvilCrystalsAtRandom(2)
 	end
+	self.playerScore = self.playerScore + 300
 end
 
 function World:spawnEvilCrystalsAtRandom(crystalCount)
