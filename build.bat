@@ -1,0 +1,1 @@
+tar.exe --exclude="bin/*" --exclude="*.bat" --exclude="*.aseprite" -a -c -f bin/game.love . 
