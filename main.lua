@@ -2,6 +2,7 @@ require "ecs.entity"
 require "ecs.world"
 
 require "components.collision"
+require "components.enemy"
 require "components.render.simpleRectRender"
 require "components.render.spriteRender"
 require "components.player.playerQuakeAbility"
@@ -72,7 +73,8 @@ function love.load()
 	world:setPlayer(player)
 
 	local enemyComponents = {
-		SpriteRender:new("assets/sprites/craggy.json", "assets/sprites/craggy.png", "default")
+		SpriteRender:new("assets/sprites/enemy.json", "assets/sprites/enemy.png", "default"),
+		Enemy:new(player)
 	}
 	local enemy = Entity:new("enemy", Vector(150, 100), enemyComponents)
 	enemy:addComponent(CollisionComponent:new(enemy))
