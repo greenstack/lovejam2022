@@ -108,6 +108,10 @@ function Entity:onDestroy()
 	end
 end
 
+function Entity:getGridPosition()
+	return CurrentWorld.map.layers.blocking:pixelToGrid(self.transform.position:split())
+end
+
 function Entity:__tostring()
 	return self.name
 end
