@@ -21,6 +21,8 @@ function World:new(name, mapPath, tileSize, obj)
 	setmetatable(obj, self)
 	self.__index = self
 
+	obj.entities = {}
+	obj.triggers = {}
 	obj.name = name
 	obj.player = nil
 	-- Set up the physical world
