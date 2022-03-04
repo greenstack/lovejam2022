@@ -32,6 +32,8 @@ function World:new(name, mapPath, tileSize, obj)
 
 	self.camera = Gamera.new(self.map.layers.blocking:getPixelBounds())
 	self.camera:setScale(2.5)
+
+	self.playerScore = 0
 	return obj
 end
 
@@ -56,6 +58,7 @@ end
 function World:_initCrystalLayer(tileSize)
 	-- Going to need all this data I think
 	local crystalCount = 0
+	self.worldCrystals = {}
 	for tileIndex, globalId, gridX, gridY, pixelX, pixelY in self.map.layers.crystals:getTiles() do
 		local healthComp = HealthComponent:new(3)
 		healthComp:registerDeathListener(function(comp) self:onGoodCrystalDead(comp) end)
@@ -77,8 +80,10 @@ function World:_initCrystalLayer(tileSize)
 		crystal:addComponent(CollisionComponent:new(crystal, "static", self, 1000000000, false))
 		crystalCount = crystalCount + 1
 		self:addEntity(crystal)
+		table.insert(self.worldCrystals, crystal)
 	end
 	self.crystalCount = crystalCount
+	self.totalCrystalCount = crystalCount
 end
 
 function World:_initEvilCrystals(tileSize)
@@ -121,26 +126,33 @@ function World:_initEvilCrystalWarps()
 		-- If this spot also has a crystal here at the start, create it
 		print(string.format("gridX: %d; gridY: %d, tileId: %d", gridX, gridY, self.map.layers.evilCrystals:getTileAtGridPosition(gridX, gridY) or 0))
 		if self.map.layers.evilCrystals:getTileAtGridPosition(gridX, gridY) then
-			local healthComp = HealthComponent:new(3)
-			healthComp:registerDeathListener(function(comp) self:onEvilCrystalDead(comp) end)
-			local crystal = Entity:new("evilCrystal_" .. evilCrystalCount,
-				Vector(pixelX + 8, pixelY + 8),
-				{
-					healthComp,
-					SpriteRender:new("assets/sprites/evil_crystal.json", "assets/sprites/evil_crystal.png", "spin_full_hp"),
-					EvilCrystal:new(warpSpot),
-				},
-				{
-					crystal = true,
-				}
-			)
-			crystal:addComponent(CollisionComponent:new(crystal, "static", self, 1000000))
+			local crystal = self:_spawnEvilCrystal(evilCrystalCount, warpSpot)
+			evilCrystalCount = evilCrystalCount + 1
 			self:addEntity(crystal)
 		end
 
 		::continue::
 	end
 	self.evilCrystalCount = evilCrystalCount
+	self.totalEvilCrystalCount = evilCrystalCount
+end
+
+function World:_spawnEvilCrystal(crystalNumber, warpSpot)
+	local healthComp = HealthComponent:new(3)
+	healthComp:registerDeathListener(function(comp) self:onEvilCrystalDead(comp) end)
+	local crystal = Entity:new("evilCrystal_" .. crystalNumber,
+		Vector(warpSpot.position.x, warpSpot.position.y),
+		{
+			healthComp,
+			SpriteRender:new("assets/sprites/evil_crystal.json", "assets/sprites/evil_crystal.png", "spin_full_hp"),
+			EvilCrystal:new(warpSpot),
+		},
+		{
+			crystal = true,
+		}
+	)
+	crystal:addComponent(CollisionComponent:new(crystal, "static", self, 1000000))
+	return crystal
 end
 
 function World:update(dt)
@@ -239,6 +251,25 @@ end
 function World:onEvilCrystalDead(healthComp)
 	self.evilCrystalCount = self.evilCrystalCount - 1
 	if self.evilCrystalCount <= 0 then
-		error("you win - for now")
+		self:spawnEvilCrystalsAtRandom(2)
 	end
+end
+
+function World:spawnEvilCrystalsAtRandom(crystalCount)
+	if crystalCount > #self.warpSpots then error("too many crystals requested!") end
+	for i = 1, crystalCount, 1 do
+		-- get a warp spot
+		local warpSpot = self:getRandomWarpSpot()
+		while warpSpot:isOccupied() do
+			warpSpot = self:getRandomWarpSpot()
+		end
+		local newCrystal = self:_spawnEvilCrystal(i, warpSpot)
+		self:addEntity(newCrystal)
+	end
+	self.evilCrystalCount = crystalCount
+	self.totalEvilCrystalCount = crystalCount
+end
+
+function World:getRandomWarpSpot()
+	return self.warpSpots[love.math.random(#CurrentWorld.warpSpots)]
 end

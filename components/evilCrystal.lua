@@ -37,6 +37,7 @@ function EvilCrystal:new(warpSpot, obj)
     }
   }
   eCrystal.warpSpot = warpSpot
+  warpSpot.crystal = eCrystal
   return eCrystal
 end
 
@@ -56,10 +57,7 @@ function EvilCrystal:start(entity)
   end)
   self.render = entity:getComponent("SpriteRender")
 
-  self.children.north.canSpawn = self:_isValidSpawn(self.children.north.spawnDelta)
-  self.children.south.canSpawn = self:_isValidSpawn(self.children.south.spawnDelta)
-  self.children.east.canSpawn = self:_isValidSpawn(self.children.east.spawnDelta)
-  self.children.west.canSpawn = self:_isValidSpawn(self.children.west.spawnDelta)
+  self:_validateSpawns()
 end
 
 function EvilCrystal:update(entity, dt)
@@ -106,6 +104,10 @@ function EvilCrystal:die()
   self.owner:kill()
 end
 
+function EvilCrystal:onDestroy()
+  
+end
+
 function EvilCrystal:intersectTrigger(entity, startThisFrame)
 	-- update animation
   if startThisFrame then
@@ -114,6 +116,13 @@ function EvilCrystal:intersectTrigger(entity, startThisFrame)
       self.render:setTag("spin_damaged")
     elseif self.healthPool:getCurrent() == 1 then
       self.render:setTag("spin_critical")
+    end
+
+    -- don't warp if dead
+    if self.owner.isPendingKill then
+      self.warpSpot.crystal = nil
+      self.warpSpot = nil
+      return
     end
 
     print "trying to warp"
@@ -134,4 +143,13 @@ function EvilCrystal:setWarpLocation(warpSpot)
   warpSpot.crystal = self
   self.owner.transform.position = warpSpot.position
   self.owner:getComponent("Collider").body:setPosition(warpSpot.position:split())
+
+  self:_validateSpawns()
+end
+
+function EvilCrystal:_validateSpawns()
+  self.children.north.canSpawn = self:_isValidSpawn(self.children.north.spawnDelta)
+  self.children.south.canSpawn = self:_isValidSpawn(self.children.south.spawnDelta)
+  self.children.east.canSpawn = self:_isValidSpawn(self.children.east.spawnDelta)
+  self.children.west.canSpawn = self:_isValidSpawn(self.children.west.spawnDelta)
 end
