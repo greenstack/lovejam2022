@@ -92,7 +92,7 @@ function World:_initCrystalLayer(tileSize)
 		self:addEntity(crystal)
 		table.insert(self.worldCrystals, crystal)
 	end
-	self.crystalCount = 1--crystalCount
+	self.crystalCount = crystalCount
 	self.totalCrystalCount = crystalCount
 end
 

@@ -1,10 +1,11 @@
 require "components.collision"
 require "ecs.component"
 require "trigger"
+local Color = require "color"
 
 Shockwave = Component:new()
 
-function Shockwave:new(player, owner, startRadius, endRadius, obj)
+function Shockwave:new(player, owner, startRadius, endRadius, color, obj)
 	local eq = Component.new(self, "Shockwave", obj)
 
 	eq.startRadius = startRadius
@@ -12,6 +13,7 @@ function Shockwave:new(player, owner, startRadius, endRadius, obj)
 	eq.endRadius = endRadius
 	eq.expansionRate = 100
 	eq.owningEntity = player or error("owningEntity cannot be nil")
+	eq.color = color or Color()
 
 	eq.trigger = Trigger:new(owner, owner.transform.position, startRadius)
 	CurrentWorld:addTrigger(eq.trigger)
@@ -56,7 +58,9 @@ function Shockwave:intersectTrigger(entity, startThisFrame)
 end
 
 function Shockwave:draw(entity)
+	love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.color.a)
 	love.graphics.circle("line", 0, 0, self.currentRadius)
+	love.graphics.setColor(1, 1, 1, 1)
 end
 
 function Shockwave:onDestroy()

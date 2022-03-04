@@ -3,6 +3,7 @@ require "components.collision"
 require "components.player.earthquake"
 
 local Baton = require "vendor.baton.baton"
+local Color = require "color"
 local Vector = require "vendor.brinevector.brinevector"
 require "util.math"
 
@@ -68,16 +69,20 @@ function Player:update(dt)
 	-- update collision and such
 	self:updateComponents(dt)
 
-	if not self.dead then 
+	if not self.dead then
+		if self.actionQueued then
+			self.quakeSize = math.min(50, self.quakeSize + 64 * dt)
+		end
 		if (input:pressed("action")) then
 			self.actionQueued = true
+			self.quakeSize = 10
 		elseif (input:released("action")) and self.actionQueued then
 			self.actionQueued = false
 			self.earthquake = Entity:new("shockwave",
 				self.transform.position,
 				{}
 			)
-			self.earthquake:addComponent(Shockwave:new(self, self.earthquake, 0, 50))
+			self.earthquake:addComponent(Shockwave:new(self, self.earthquake, 0, self.quakeSize, Color(0.18, 1, 0.37)))
 			CurrentWorld:addEntity(self.earthquake)
 			-- Stop the player: should not be able to move while earthquaking
 			self.collider.body:setLinearVelocity(0, 0)
@@ -96,4 +101,9 @@ end
 
 function Player:draw()
 	self:drawComponents()
+	if self.actionQueued then
+		love.graphics.setColor(0.68, 0.99, 1)
+		love.graphics.circle("line", self.transform.position.x, self.transform.position.y, self.quakeSize)
+		love.graphics.setColor(1,1,1)
+	end
 end

@@ -1,5 +1,7 @@
 require "ecs.component"
 
+local Color = require "color"
+
 Enemy = Component:new()
 
 function Enemy:new(player, speed, deathRadius, obj)
@@ -44,7 +46,7 @@ function Enemy:beginContact(other, coll)
 			enemy = true,
 		}
 	)
-	earthquake:addComponent(Shockwave:new(self.owner, earthquake, 0, self.deathRadius))
+	earthquake:addComponent(Shockwave:new(self.owner, earthquake, 0, self.deathRadius, Color(1, 0.03, 0)))
 	earthquake:setTag("enemy", true)
 	CurrentWorld:addEntity(earthquake)
 end

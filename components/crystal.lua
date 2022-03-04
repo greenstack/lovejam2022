@@ -18,12 +18,14 @@ end
 
 function Crystal:intersectTrigger(entity, startThisFrame)
 	if startThisFrame then
-		self.healthPool:loseHealth(1)
-		CurrentWorld.map.layers.crystals:setTileAtGridPosition(
-			self.gridX,
-			self.gridY,
-			CurrentWorld.map.layers.crystals.data[self.tileIndex] + 1
-		)
+		if self.healthPool:getCurrent() > 0 then
+			self.healthPool:loseHealth(1)
+			CurrentWorld.map.layers.crystals:setTileAtGridPosition(
+				self.gridX,
+				self.gridY,
+				CurrentWorld.map.layers.crystals.data[self.tileIndex] + 1
+			)
+		end
 	end
 end
 
