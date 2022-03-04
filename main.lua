@@ -10,8 +10,11 @@ require "player"
 
 local Vector = require "vendor.brinevector.brinevector"
 local Baton = require "vendor.baton.baton"
+local Color = require "color"
 
 local launchType = arg[2]
+
+require "bar"
 
 DEBUG_MODE = false
 TEST_MODE = false
@@ -89,7 +92,33 @@ function love.update(dt)
 	CurrentWorld:update(dt)
 end
 
+local worldHealthBar = Bar:new("worldHealth", Vector(10, 10), Color(0, 1, 0), 100, 10)
+
+worldHealthBar.currentValueSource = function()
+	local health = 0
+	for _, crystal in ipairs(CurrentWorld.worldCrystals) do
+		health = health + crystal:getComponent("Health"):getCurrent()
+	end
+	return health
+end
+
+worldHealthBar.maxValueSource = function()
+	return CurrentWorld.totalCrystalCount * 3
+end
+
+local enemyCrystalBar = Bar:new("enemyCrystals", Vector(10, 23), Color(1, 0, 0), 100, 10)
+
+enemyCrystalBar.currentValueSource = function()
+	return world.evilCrystalCount
+end
+
+enemyCrystalBar.maxValueSource = function()
+	return world.totalEvilCrystalCount
+end
+
 function love.draw()
 	CurrentWorld:draw()
+	worldHealthBar:draw()
+	enemyCrystalBar:draw()
 end
 
