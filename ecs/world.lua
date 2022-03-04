@@ -1,6 +1,8 @@
 require "components.health"
 require "components.crystal"
+require "components.enemy"
 require "components.evilCrystal"
+require "components.render.spriteRender"
 
 local Cartographer = require "vendor.cartographer.cartographer"
 local Gamera = require "vendor.gamera.gamera"
@@ -18,6 +20,7 @@ function World:new(name, mapPath, tileSize, obj)
 	obj = obj or {}
 	setmetatable(obj, self)
 	self.__index = self
+
 	obj.name = name
 	obj.player = nil
 	-- Set up the physical world
@@ -34,13 +37,13 @@ function World:new(name, mapPath, tileSize, obj)
 	obj.map = Cartographer.load(mapPath)
 	obj:_initBlockingLayer(tileSize)
 	obj:_initCrystalLayer(tileSize)
-	--self:_initEvilCrystals(tileSize)
 	obj:_initEvilCrystalWarps()
 
 	obj.camera = Gamera.new(obj.map.layers.blocking:getPixelBounds())
 	obj.camera:setScale(2.5)
 
 	obj.playerScore = 0
+	obj.isGameOver = false
 	return obj
 end
 
@@ -71,9 +74,6 @@ function World:_initCrystalLayer(tileSize)
 		healthComp:registerDeathListener(function(comp) self:onGoodCrystalDead(comp) end)
 		-- Set up the good crystal entities
 		local crystal = Entity:new("crytal_" .. crystalCount,
-			-- Because of collision stuff, the collisions aren't in the right
-			-- place! TODO: Fix this!
-			-- TODO: When all crystals are destroyed, game over!
 			Vector(pixelX + 8, pixelY + 8),
 			{
 				healthComp,
@@ -345,7 +345,8 @@ end
 function World:gameOver(isVictory)
 	self.pauseUpdates = true
 	self.victory = isVictory
+	self.isGameOver = true
 	if not isVictory then
-		
+
 	end
 end

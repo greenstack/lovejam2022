@@ -1,13 +1,5 @@
-require "ecs.entity"
-require "ecs.world"
-
-require "components.collision"
-require "components.enemy"
-require "components.render.simpleRectRender"
-require "components.render.spriteRender"
-require "components.player.playerQuakeAbility"
-
-require "player"
+require "game"
+require "titleScreen"
 
 local Vector = require "vendor.brinevector.brinevector"
 local Baton = require "vendor.baton.baton"
@@ -54,38 +46,10 @@ function love.errorhandler(msg)
 	end
 end
 
-local world = World:new("test", "assets/map1.lua", 16)
-local player
-
-CurrentWorld = world
-
-function love.load()
-	local windowTitle = "Magna and Dude"
-	if TEST_MODE then
-		windowTitle = windowTitle .. " (Test)"
-	elseif DEBUG_MODE then
-		windowTitle = windowTitle .. " (Debug)"
-	end
-	love.window.setTitle(windowTitle)
-
-	player = Player:new(Vector(100, 100))
-	world:addEntity(player)
-	world:setPlayer(player)
-
-end
-
-function love.update(dt)
-	if debugControls then
-		debugControls:update()
-
-		-- Toggles debug drawing
-		if debugControls:pressed("drawDebug") then
-			DRAW_DEBUG = not DRAW_DEBUG
-		end
-	end
-
-	CurrentWorld:update(dt)
-end
+CurrentWorld = nil
+CurrentGame = nil
+MainGame = nil
+Title = nil
 
 local worldHealthBar = Bar:new("worldHealth", Vector(10, 10), Color(0, 1, 0), 100, 10)
 
@@ -104,23 +68,55 @@ end
 local enemyCrystalBar = Bar:new("enemyCrystals", Vector(10, 23), Color(1, 0, 0), 100, 10)
 
 enemyCrystalBar.currentValueSource = function()
-	return world.evilCrystalCount
+	return CurrentWorld.evilCrystalCount
 end
 
 enemyCrystalBar.maxValueSource = function()
-	return world.totalEvilCrystalCount
+	return CurrentWorld.totalEvilCrystalCount
+end
+
+function love.load()
+	local windowTitle = "Magna and Dude"
+	if TEST_MODE then
+		windowTitle = windowTitle .. " (Test)"
+	elseif DEBUG_MODE then
+		windowTitle = windowTitle .. " (Debug)"
+	end
+	love.window.setTitle(windowTitle)
+
+	CurrentGame = TitleScreen:new()
+	Title = CurrentGame
+	MainGame = Game:new()
+	MainGame:addPostWorldDrawCallback(
+		function ()
+			worldHealthBar:draw()
+			enemyCrystalBar:draw()
+				love.graphics.printf(
+				"Score: " .. CurrentWorld.playerScore,
+				love.graphics.getWidth() / 2,
+				10,
+				love.graphics.getWidth() / 4,
+				"center"
+			)
+		end
+	)
+	CurrentWorld = MainGame.world
+end
+
+function love.update(dt)
+	if debugControls then
+		debugControls:update()
+
+		-- Toggles debug drawing
+		if debugControls:pressed("drawDebug") then
+			DRAW_DEBUG = not DRAW_DEBUG
+		end
+	end
+
+	CurrentGame:update(dt)
 end
 
 function love.draw()
-	CurrentWorld:draw()
-	worldHealthBar:draw()
-	enemyCrystalBar:draw()
-	love.graphics.printf(
-		"Score: " .. CurrentWorld.playerScore,
-		love.graphics.getWidth() / 2,
-		10,
-		love.graphics.getWidth() / 4,
-		"center"
-	)
+	CurrentGame:draw()
 end
 
