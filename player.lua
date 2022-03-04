@@ -34,49 +34,64 @@ function Player:new(position, components, tags, obj)
 	player.render = SpriteRender:new("assets/sprites/magna.json", "assets/sprites/magna.png", "idle")
 	player:addComponent(player.render)
 	
+	player:addComponent(HealthComponent:new(6))
+
 	player.actionQueued = false
 	return player
 end
 
 function Player:update(dt)
-	if self.earthquake == nil or self.earthquake.isPendingKill then
-		input:update()
-		local x, y = input:get 'move'
-		self.collider:applyForce(Vector(x, y) * 200)
-		-- Kill the earthquake if necessary
-		if self.earthquake ~= nil then
-			self.earthquake = nil
+	if not self.dead then
+		if self.earthquake == nil or self.earthquake.isPendingKill then
+			input:update()
+			local x, y = input:get 'move'
+			self.collider:applyForce(Vector(x, y) * 200)
+			-- Kill the earthquake if necessary
+			if self.earthquake ~= nil then
+				self.earthquake = nil
+			end
 		end
-	end
-
-	local velocity = Vector(self.collider.body:getLinearVelocity())
-	local speed = velocity.length
-
-	-- 16 seems to be the magic number for when to switch between run and idle
-	if speed > 16 then
-		self.render:setTag("run")
-		self.render.flipHorizontal = gs.math.sign(velocity.x) == -1
-		
-	else
-		self.render:setTag("idle")
+	
+		local velocity = Vector(self.collider.body:getLinearVelocity())
+		local speed = velocity.length
+	
+		-- 16 seems to be the magic number for when to switch between run and idle
+		if speed > 16 then
+			self.render:setTag("run")
+			self.render.flipHorizontal = gs.math.sign(velocity.x) == -1
+			
+		else
+			self.render:setTag("idle")
+		end
 	end
 
 	-- update collision and such
 	self:updateComponents(dt)
 
-	if (input:pressed("action")) then
-		self.actionQueued = true
-	elseif (input:released("action")) and self.actionQueued then
-		self.actionQueued = false
-		self.earthquake = Entity:new("shockwave",
-			self.transform.position,
-			{}
-		)
-		self.earthquake:addComponent(Shockwave:new(self, self.earthquake, 0, 50))
-		CurrentWorld:addEntity(self.earthquake)
-		-- Stop the player: should not be able to move while earthquaking
-		self.collider.body:setLinearVelocity(0, 0)
+	if not self.dead then 
+		if (input:pressed("action")) then
+			self.actionQueued = true
+		elseif (input:released("action")) and self.actionQueued then
+			self.actionQueued = false
+			self.earthquake = Entity:new("shockwave",
+				self.transform.position,
+				{}
+			)
+			self.earthquake:addComponent(Shockwave:new(self, self.earthquake, 0, 50))
+			CurrentWorld:addEntity(self.earthquake)
+			-- Stop the player: should not be able to move while earthquaking
+			self.collider.body:setLinearVelocity(0, 0)
+		end
 	end
+end
+
+function Player:die()
+	self.dead = true
+	self.render:setTag("die")
+	self.render.ing:onLoop(function() 
+		self.render.ing:stop(true)
+		CurrentWorld:gameOver(false)
+	end)
 end
 
 function Player:draw()

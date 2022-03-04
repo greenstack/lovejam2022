@@ -112,6 +112,30 @@ function Entity:getGridPosition()
 	return CurrentWorld.map.layers.blocking:pixelToGrid(self.transform.position:split())
 end
 
+function Entity:beginContact(other, collisionData)
+	for _, comp in pairs(self.components) do
+		comp:beginContact(other, collisionData)
+	end
+end
+
+function Entity:endContact(other, collisionData)
+	for _, comp in pairs(self.components) do
+		comp:endContact(other, collisionData)
+	end
+end
+
+function Entity:preSolve(other, collisionData)
+	for _, comp in pairs(self.components) do
+		comp:preSolve(other, collisionData)
+	end
+end
+
+function Entity:postSolve(other, collisionData, normalImpulse, tangentImpulse)
+	for _, comp in pairs(self.components) do
+		comp:postSolve(other, collisionData, normalImpulse, tangentImpulse)
+	end
+end
+
 function Entity:__tostring()
 	return self.name
 end

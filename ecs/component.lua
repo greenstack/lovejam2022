@@ -48,6 +48,11 @@ function Component:disable() self.enabled = false end
 
 function Component:onCollision(entity, collisions) end
 
+function Component:beginContact(other, coll) end
+function Component:endContact(other, coll) end
+function Component:preSolve(other, coll) end
+function Component:postSolve(other, coll, normalImpulse, tangentImpulse) end
+
 function Component:intersectTrigger(entity) end
 
 -- Triggers when either the component or owning entity are destroyed/killed

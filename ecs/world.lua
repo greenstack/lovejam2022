@@ -11,29 +11,36 @@ World = {
 	name = "",
 	physicsWorld = nil,
 	triggers = {},
+	player = nil,
 }
 
 function World:new(name, mapPath, tileSize, obj)
 	obj = obj or {}
 	setmetatable(obj, self)
 	self.__index = self
-	self.name = name
-
+	obj.name = name
+	obj.player = nil
 	-- Set up the physical world
 	love.physics.setMeter(tileSize)
-	self.physicsWorld = love.physics.newWorld(0, 0, true)
-	
+	obj.physicsWorld = love.physics.newWorld(0, 0, true)
+	obj.physicsWorld:setCallbacks(
+		function(a, b, coll) obj:beginContact(a, b, coll) end,
+		function(a, b, coll) obj:endContact(a, b, coll) end,
+		function(a, b, coll) obj:preSolve(a, b, coll) end,
+		function(a, b, coll, normalimpulse, tangential) obj:postSolve(a, b, coll, normalimpulse, tangential) end
+	)
+
 	-- Set up the map
-	self.map = Cartographer.load(mapPath)
-	self:_initBlockingLayer(tileSize)
-	self:_initCrystalLayer(tileSize)
+	obj.map = Cartographer.load(mapPath)
+	obj:_initBlockingLayer(tileSize)
+	obj:_initCrystalLayer(tileSize)
 	--self:_initEvilCrystals(tileSize)
-	self:_initEvilCrystalWarps()
+	obj:_initEvilCrystalWarps()
 
-	self.camera = Gamera.new(self.map.layers.blocking:getPixelBounds())
-	self.camera:setScale(2.5)
+	obj.camera = Gamera.new(obj.map.layers.blocking:getPixelBounds())
+	obj.camera:setScale(2.5)
 
-	self.playerScore = 0
+	obj.playerScore = 0
 	return obj
 end
 
@@ -74,6 +81,7 @@ function World:_initCrystalLayer(tileSize)
 			},
 			{
 				crystal = true,
+				enemy = false,
 			}
 		)
 
@@ -82,7 +90,7 @@ function World:_initCrystalLayer(tileSize)
 		self:addEntity(crystal)
 		table.insert(self.worldCrystals, crystal)
 	end
-	self.crystalCount = crystalCount
+	self.crystalCount = 1--crystalCount
 	self.totalCrystalCount = crystalCount
 end
 
@@ -149,13 +157,55 @@ function World:_spawnEvilCrystal(crystalNumber, warpSpot)
 		},
 		{
 			crystal = true,
+			enemy = true,
 		}
 	)
 	crystal:addComponent(CollisionComponent:new(crystal, "static", self, 1000000))
 	return crystal
 end
 
+function World:beginContact(a, b, coll)
+	local colliderA = a:getUserData()
+	local colliderB = b:getUserData()
+	
+	if colliderA and colliderB then
+		colliderA.owner:beginContact(colliderB.owner, coll)
+		colliderB.owner:beginContact(colliderA.owner, coll)
+	end
+end
+
+function World:endContact(a, b, coll)
+	local colliderA = a:getUserData()
+	local colliderB = b:getUserData()
+	
+	if colliderA and colliderB then
+		colliderA.owner:endContact(colliderB.owner, coll)
+		colliderB.owner:endContact(colliderA.owner, coll)
+	end
+end
+
+function World:preSolve(a, b, coll)
+	local colliderA = a:getUserData()
+	local colliderB = b:getUserData()
+	
+	if colliderA and colliderB then
+		colliderA.owner:preSolve(colliderB.owner, coll)
+		colliderB.owner:preSolve(colliderA.owner, coll)
+	end
+end
+
+function World:postSolve(a, b, coll, normalimpulse, tangentimpulse)
+	local colliderA = a:getUserData()
+	local colliderB = b:getUserData()
+	
+	if colliderA and colliderB then
+		colliderA.owner:postSolve(colliderB.owner, coll, normalimpulse, tangentimpulse)
+		colliderB.owner:postSolve(colliderA.owner, coll, normalimpulse, tangentimpulse)
+	end
+end
+
 function World:update(dt)
+	if self.pauseUpdates then return end
 	self.physicsWorld:update(dt)
 	self.map:update(dt)
 
@@ -244,14 +294,14 @@ end
 function World:onGoodCrystalDead(healthComp)
 	self.crystalCount = self.crystalCount - 1
 	if self.crystalCount <= 0 then
-		error("game over!")
+		self.player:die()
 	end
 end
 
 function World:onEvilCrystalDead(healthComp)
 	self.evilCrystalCount = self.evilCrystalCount - 1
 	if self.evilCrystalCount <= 0 then
-		self:spawnEvilCrystalsAtRandom(2)
+		self:spawnEvilCrystalsAtRandom(math.min(self.totalEvilCrystalCount + 1, #self.warpSpots - 1))
 	end
 	self.playerScore = self.playerScore + 300
 end
@@ -273,4 +323,29 @@ end
 
 function World:getRandomWarpSpot()
 	return self.warpSpots[love.math.random(#CurrentWorld.warpSpots)]
+end
+
+function World:spawnEnemy(pixelX, pixelY, speed, deathRadius)
+	local enemyComponents = {
+		SpriteRender:new("assets/sprites/enemy.json", "assets/sprites/enemy.png", "default"),
+		Enemy:new(self.player, speed, deathRadius),
+		HealthComponent:new(2),
+	}
+	local enemy = Entity:new("enemy", Vector(pixelX, pixelY), enemyComponents,
+		{
+			enemy = true,
+			crystal = false,
+		}
+	)
+	enemy:addComponent(CollisionComponent:new(enemy, "dynamic", nil, 1))
+	self:addEntity(enemy)
+	return enemy
+end
+
+function World:gameOver(isVictory)
+	self.pauseUpdates = true
+	self.victory = isVictory
+	if not isVictory then
+		
+	end
 end

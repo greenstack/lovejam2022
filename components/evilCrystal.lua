@@ -47,7 +47,7 @@ function EvilCrystal:_isValidSpawn(spawnDelta)
   positionX = positionX + spawnDelta.x
   positionY = positionY + spawnDelta.y
 
-  return layer:getTileAtGridPosition(positionX, positionY) == 0
+  return layer:getTileAtGridPosition(positionX, positionY) == false
 end
 
 function EvilCrystal:start(entity)
@@ -91,24 +91,23 @@ function EvilCrystal:spawnChild(childData)
   tilePosY = tilePosY + childData.spawnDelta.y
   local pixelX, pixelY = layer:gridToPixel(tilePosX, tilePosY)
 
-  local enemy = Entity:new("ecchild", Vector(pixelX + 8, pixelY + 8), {
-    SpriteRender:new("assets/sprites/craggy.json", "assets/sprites/craggy.png", "default")
-  }, {enemy = true})
-  local collision = CollisionComponent:new(enemy, "dynamic", CurrentWorld, 1)
-  enemy:addComponent(collision)
-  CurrentWorld:addEntity(enemy)
-  return enemy
+  local healthLost = 4 - self.healthPool:getCurrent()
+  local speed = 100 * healthLost
+  local deathRadius = 15 * (healthLost + 1)
+  return CurrentWorld:spawnEnemy(pixelX, pixelY, speed, deathRadius)
 end
 
 function EvilCrystal:die()
   self.owner:kill()
 end
 
-function EvilCrystal:onDestroy()
-  
-end
+function EvilCrystal:onDestroy() end
 
 function EvilCrystal:intersectTrigger(entity, startThisFrame)
+  if entity.owner.tags.enemy then
+    return
+  end
+
 	-- update animation
   if startThisFrame then
 		self.healthPool:loseHealth(1)

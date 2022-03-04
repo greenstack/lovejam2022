@@ -33,6 +33,7 @@ end
 
 function Shockwave:intersectTrigger(entity, startThisFrame)
 	if entity == self.owningEntity then return end
+	if entity:getTag("enemy") == self.owner:getTag("enemy") then return end
 	if entity:getTag("crystal") then
 		local crystal = entity:getComponent("Crystal") 
 		if crystal == nil then 
@@ -44,6 +45,14 @@ function Shockwave:intersectTrigger(entity, startThisFrame)
 	local collision = entity:getComponent("Collider")
 	local vec2other = entity.transform.position - self.owningEntity.transform.position
 	collision:applyForce(vec2other.normalized * 2400)
+
+	local enemy = entity:getComponent("Enemy")
+	if startThisFrame and enemy then
+		if not enemy:isInvincible() then
+			entity:getComponent("Health"):loseHealth(1)
+			enemy:activateIFrames()
+		end
+	end
 end
 
 function Shockwave:draw(entity)

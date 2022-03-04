@@ -72,13 +72,6 @@ function love.load()
 	world:addEntity(player)
 	world:setPlayer(player)
 
-	local enemyComponents = {
-		SpriteRender:new("assets/sprites/enemy.json", "assets/sprites/enemy.png", "default"),
-		Enemy:new(player)
-	}
-	local enemy = Entity:new("enemy", Vector(150, 100), enemyComponents)
-	enemy:addComponent(CollisionComponent:new(enemy))
-	world:addEntity(enemy)
 end
 
 function love.update(dt)
@@ -122,5 +115,12 @@ function love.draw()
 	CurrentWorld:draw()
 	worldHealthBar:draw()
 	enemyCrystalBar:draw()
+	love.graphics.printf(
+		"Score: " .. CurrentWorld.playerScore,
+		love.graphics.getWidth() / 2,
+		10,
+		love.graphics.getWidth() / 4,
+		"center"
+	)
 end
 
