@@ -16,16 +16,24 @@ function Crystal:start(entity)
 	self.healthPool:registerDeathListener(function(pool) self:die() end)
 end
 
-function Crystal:intersectTrigger(entity, startThisFrame)
-	if startThisFrame then
-		if self.healthPool:getCurrent() > 0 then
-			self.healthPool:loseHealth(1)
-			CurrentWorld.map.layers.crystals:setTileAtGridPosition(
-				self.gridX,
-				self.gridY,
-				CurrentWorld.map.layers.crystals.data[self.tileIndex] + 1
-			)
-		end
+function Crystal:beginContact(entity, contact)
+	local fixtureA, fixtureB = contact:getFixtures()
+  local myFixture = self.owner:getComponent("Collider").fixture
+  local theirFixture
+  if fixtureA == myFixture then theirFixture = fixtureB else theirFixture = fixtureA end
+
+  -- We only want to react to quakes for now
+  if not theirFixture:isSensor() then
+    return
+  end
+
+	if self.healthPool:getCurrent() > 0 then
+		self.healthPool:loseHealth(1)
+		CurrentWorld.map.layers.crystals:setTileAtGridPosition(
+			self.gridX,
+			self.gridY,
+			CurrentWorld.map.layers.crystals.data[self.tileIndex] + 1
+		)
 	end
 end
 

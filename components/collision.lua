@@ -7,9 +7,13 @@ CollisionComponent = Component:new()
 function CollisionComponent:new(entity, bodyType, world, mass, destroyColliderOnDestroy, obj)
 	local collider = Component.new(self, "Collider", obj)
 
+	collider.startup = {
+		bodyType = bodyType or "dynamic",
+		mass = mass or 1,
+		destroyColliderOnDestroy = destroyColliderOnDestroy,
+	}
+
 	local currentWorld = world or CurrentWorld
-	--assert(entity, error("Cannot set up collider without an entity"))
-	--assert(currentWorld, "World not set up")
 	collider.body = love.physics.newBody(currentWorld.physicsWorld, entity.transform.position.x, entity.transform.position.y, bodyType or "dynamic")
 	collider.body:setLinearDamping(8)
 	collider.shape = love.physics.newCircleShape(6)
@@ -19,9 +23,13 @@ function CollisionComponent:new(entity, bodyType, world, mass, destroyColliderOn
 	else
 		collider.destroyColliderOnDestroy = true
 	end
-	
 	collider.fixture:setUserData(collider)
+	
 	return collider
+end
+
+function CollisionComponent:start(entity)
+
 end
 
 function CollisionComponent:update(entity, dt)
@@ -38,6 +46,7 @@ function CollisionComponent:draw(entity)
 end
 
 function CollisionComponent:applyForce(vector)
+	if self.body == nil then return end
 	self.body:applyForce(vector:split())
 end
 

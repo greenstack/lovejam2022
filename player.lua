@@ -42,7 +42,7 @@ function Player:new(position, components, tags, obj)
 end
 
 function Player:update(dt)
-	if not self.dead then
+	if not self.dead and self.collider.body ~= nil then
 		if self.earthquake == nil or self.earthquake.isPendingKill then
 			input:update()
 			local x, y = input:get 'move'

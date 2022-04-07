@@ -38,6 +38,17 @@ end
 function Enemy:beginContact(other, coll)
 	if other:getTag("enemy") or other:getTag("crystal") then return end
 	self.owner:kill()
+
+	local fixtureA, fixtureB = coll:getFixtures()
+  local myFixture = self.owner:getComponent("Collider").fixture
+  local theirFixture
+  if fixtureA == myFixture then theirFixture = fixtureB else theirFixture = fixtureA end
+
+  -- We only want to react to players for now
+  if theirFixture:isSensor() then
+    return
+  end
+
 	-- create shockwave
 	local earthquake = Entity:new(
 		"enemyQuake",
@@ -46,7 +57,7 @@ function Enemy:beginContact(other, coll)
 			enemy = true,
 		}
 	)
-	earthquake:addComponent(Shockwave:new(self.owner, earthquake, 0, self.deathRadius, Color(1, 0.03, 0)))
+	earthquake:addComponent(Shockwave:new(self.owner, earthquake, 0, self.deathRadius, Color(1, 0, 1)))
 	earthquake:setTag("enemy", true)
 	CurrentWorld:addEntity(earthquake)
 end

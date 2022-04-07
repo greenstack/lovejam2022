@@ -12,7 +12,6 @@ World = {
 	entities = {},
 	name = "",
 	physicsWorld = nil,
-	triggers = {},
 	player = nil,
 }
 
@@ -22,7 +21,6 @@ function World:new(name, mapPath, tileSize, obj)
 	self.__index = self
 
 	obj.entities = {}
-	obj.triggers = {}
 	obj.name = name
 	obj.player = nil
 	-- Set up the physical world
@@ -162,15 +160,15 @@ function World:_spawnEvilCrystal(crystalNumber, warpSpot)
 			enemy = true,
 		}
 	)
-	crystal:addComponent(CollisionComponent:new(crystal, "static", self, 1000000))
+	crystal:addComponent(CollisionComponent:new(crystal, "dynamic", self, 1000000000))
 	return crystal
 end
 
 function World:beginContact(a, b, coll)
 	local colliderA = a:getUserData()
 	local colliderB = b:getUserData()
-	
-	if colliderA and colliderB then
+
+	if colliderA and colliderB and colliderA.owner ~= colliderB.owner and colliderA:Started() and colliderB:Started() then
 		colliderA.owner:beginContact(colliderB.owner, coll)
 		colliderB.owner:beginContact(colliderA.owner, coll)
 	end
@@ -180,7 +178,7 @@ function World:endContact(a, b, coll)
 	local colliderA = a:getUserData()
 	local colliderB = b:getUserData()
 	
-	if colliderA and colliderB then
+	if colliderA and colliderB and colliderA.owner ~= colliderB.owner and colliderA:Started() and colliderB:Started() then
 		colliderA.owner:endContact(colliderB.owner, coll)
 		colliderB.owner:endContact(colliderA.owner, coll)
 	end
@@ -189,8 +187,8 @@ end
 function World:preSolve(a, b, coll)
 	local colliderA = a:getUserData()
 	local colliderB = b:getUserData()
-	
-	if colliderA and colliderB then
+
+	if colliderA and colliderB and colliderA:Started() and colliderB:Started() then
 		colliderA.owner:preSolve(colliderB.owner, coll)
 		colliderB.owner:preSolve(colliderA.owner, coll)
 	end
@@ -199,8 +197,8 @@ end
 function World:postSolve(a, b, coll, normalimpulse, tangentimpulse)
 	local colliderA = a:getUserData()
 	local colliderB = b:getUserData()
-	
-	if colliderA and colliderB then
+
+	if colliderA and colliderB and colliderA:Started() and colliderB:Started() then
 		colliderA.owner:postSolve(colliderB.owner, coll, normalimpulse, tangentimpulse)
 		colliderB.owner:postSolve(colliderA.owner, coll, normalimpulse, tangentimpulse)
 	end
@@ -208,6 +206,7 @@ end
 
 function World:update(dt)
 	if self.pauseUpdates then return end
+
 	self.physicsWorld:update(dt)
 	self.map:update(dt)
 
@@ -223,38 +222,13 @@ function World:update(dt)
 		else
 			ei = ei + 1
 		end
-		-- Check if entity is in any triggers
-
-		self:updateTriggers(dt, entity)
 	end
 
 	self.camera:setPosition(self.player.transform.position.x, self.player.transform.position.y)
-end
 
-function World:updateTriggers(dt, entity)
-	local ti = 1
-	while ti <= #self.triggers do
-		local trigger = self.triggers[ti]
-		-- some triggers will be removed
-		if trigger.isPendingKill then
-			table.remove(self.triggers, ti)
-		else
-			-- It should be entity:startIntersection(trigger)
-			-- entity:continueIntersection(trigger)
-			-- entity:endIntersection(trigger)
-			if (trigger:intersectsEntity(entity)) then
-				if entity:getTag("intersecting") == false then
-					trigger.owner:intersectTrigger(entity, true)
-					entity:setTag("intersecting", true)
-				else
-					trigger.owner:intersectTrigger(entity, false)
-				end
-			else
-				-- TODO: End intersection trigger?
-				entity:setTag("intersecting", false)
-			end
-			ti = ti + 1
-		end
+	if self.needToSpawnCrystals == true then
+		self:spawnEvilCrystalsAtRandom(math.min(self.totalEvilCrystalCount + 1, #self.warpSpots - 1))
+		self.needToSpawnCrystals = false
 	end
 end
 
@@ -285,10 +259,6 @@ function World:addEntity(entity)
 	table.insert(self.entities, entity)
 end
 
-function World:addTrigger(trigger)
-	table.insert(self.triggers, trigger)
-end
-
 function World:__tostring()
 	return self.name
 end
@@ -303,7 +273,7 @@ end
 function World:onEvilCrystalDead(healthComp)
 	self.evilCrystalCount = self.evilCrystalCount - 1
 	if self.evilCrystalCount <= 0 then
-		self:spawnEvilCrystalsAtRandom(math.min(self.totalEvilCrystalCount + 1, #self.warpSpots - 1))
+		self.needToSpawnCrystals = true
 	end
 	self.playerScore = self.playerScore + 300
 end
