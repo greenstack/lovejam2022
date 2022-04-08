@@ -16,7 +16,8 @@ local input = Baton.new
 		right = {'key:right', 'key:d', 'axis:leftx+', 'button:dpright'},
 		up = {'key:up', 'key:w', 'axis:lefty-', 'button:dpup'},
 		down = {'key:down', 'key:s', 'axis:lefty+', 'button:dpdown'},
-		action = {'key:x', 'button:a'},
+		action = {'key:x', 'key:return', 'button:a'},
+		cancelAction = { 'key:z', 'key:rshift', 'button:b' },
 	},
 	pairs = {
 		move = {"left", "right", "up", "down"}
@@ -31,6 +32,10 @@ function Player:new(position, components, tags, obj)
 	self.collider = playerCollision
 	player:addComponent(playerCollision)
 	
+	player.defaultSpeed = 300
+	player.speed = player.defaultSpeed
+	player.chargeWalkSpeed = player.defaultSpeed / 2
+
 	player.facing = 1
 	player.render = SpriteRender:new("assets/sprites/magna.json", "assets/sprites/magna.png", "idle")
 	player:addComponent(player.render)
@@ -46,10 +51,11 @@ function Player:update(dt)
 		if self.earthquake == nil or self.earthquake.isPendingKill then
 			input:update()
 			local x, y = input:get 'move'
-			self.collider:applyForce(Vector(x, y) * 200)
+			self.collider:applyForce(Vector(x, y) * self.speed)
 			-- Kill the earthquake if necessary
 			if self.earthquake ~= nil then
 				self.earthquake = nil
+				self.speed = self.defaultSpeed
 			end
 		end
 	
@@ -60,7 +66,6 @@ function Player:update(dt)
 		if speed > 16 then
 			self.render:setTag("run")
 			self.render.flipHorizontal = gs.math.sign(velocity.x) == -1
-			
 		else
 			self.render:setTag("idle")
 		end
@@ -76,6 +81,7 @@ function Player:update(dt)
 		if (input:pressed("action")) then
 			self.actionQueued = true
 			self.quakeSize = 10
+			self.speed = self.chargeWalkSpeed
 		elseif (input:released("action")) and self.actionQueued then
 			self.actionQueued = false
 			self.earthquake = Entity:new("shockwave",
@@ -85,7 +91,12 @@ function Player:update(dt)
 			self.earthquake:addComponent(Shockwave:new(self, self.earthquake, 0, self.quakeSize, Color(0.18, 1, 0.37)))
 			CurrentWorld:addEntity(self.earthquake)
 			-- Stop the player: should not be able to move while earthquaking
-			self.collider.body:setLinearVelocity(0, 0)
+			self.speed = 0
+		end
+
+		if input:pressed("cancelAction") then
+			self.speed = self.defaultSpeed
+			self.actionQueued = false
 		end
 	end
 end
@@ -106,4 +117,8 @@ function Player:draw()
 		love.graphics.circle("line", self.transform.position.x, self.transform.position.y, self.quakeSize)
 		love.graphics.setColor(1,1,1)
 	end
+end
+
+function Player:__tostring()
+	return "Player"
 end
