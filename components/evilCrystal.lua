@@ -40,7 +40,7 @@ function EvilCrystal:new(warpSpot, obj)
   }
   eCrystal.warpSpot = warpSpot
   warpSpot.crystal = eCrystal
-  eCrystal.timeBetweenQuakes = 10
+  eCrystal.timeBetweenQuakes = 30
   eCrystal:_startOrResetQuakeTimer()
   return eCrystal
 end
@@ -53,6 +53,8 @@ function EvilCrystal:_isValidSpawn(spawnDelta)
 
   return layer:getTileAtGridPosition(positionX, positionY) == false
 end
+
+local quakeCount = 0
 
 function EvilCrystal:start(entity)
   self.healthPool = entity:getComponent("Health")
@@ -76,21 +78,25 @@ function EvilCrystal:update(entity, dt)
   self:handleChild(self.children.south, dt)
   self:handleChild(self.children.east, dt)
 
-  --self.timeToQuake = self.timeToQuake - dt
+  self.timeToQuake = self.timeToQuake - dt
   if self.timeToQuake <= 0 then
-    print("big quake time")
     self:_startOrResetQuakeTimer()
-    -- spawn a quake here
-    local bigQuake = Entity:new(
-      "crystalQuake",
+
+    local earthquake = Entity:new(
+      "enemyQuake" .. quakeCount,
       self.owner.transform.position,
       {
-        enemy = true
+        enemy = true,
       }
     )
-    bigQuake:addComponent(Shockwave:new(self.owner, bigQuake, 0, 2048, Color(1, 0, 0)))
-    bigQuake:setTag("enemy", true)
-    CurrentWorld:addEntity(bigQuake)
+    quakeCount = quakeCount + 1
+    -- there's an upper limit to the acceptable radius.
+    -- How do we mitigate this limitation? 50 works fine; 70?
+    earthquake:addComponent(Shockwave:new(self.owner, earthquake, 0, 512, Color(1, 0, 0)))
+    earthquake:setTag("enemy", true)
+    earthquake:setTag("bigQuake", true)
+    CurrentWorld:addEntity(earthquake)
+    
   end
 end
 
