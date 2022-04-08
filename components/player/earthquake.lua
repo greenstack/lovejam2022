@@ -32,26 +32,34 @@ function Shockwave:update(entity, dt)
 	end
 	self.currentRadius = self.currentRadius + self.expansionRate * dt
 	self.collider.fixture:getShape():setRadius(self.currentRadius)
+	
+	if self.currentRadius - self.startRadius > 50 then
+		-- recreate
+		self.startRadius = self.currentRadius
+		
+		self.collider.fixture:setUserData(nil)
+		self.collider.fixture:destroy()
+
+		self.collider.shape = love.physics.newCircleShape(self.startRadius)
+		self.collider.fixture = love.physics.newFixture(self.collider.body, self.collider.shape)
+		self.collider.fixture:setSensor(true)
+		self.collider.fixture:setUserData(self.collider)
+	end
 end
 
-local counter = 0
-
 function Shockwave:beginContact(entity, collision)
-	counter = counter + 1
-	if counter <= 3 then
-		return
-	end
-
 	-- don't react to other sensors
 	local fixtureA, fixtureB = collision:getFixtures()
 	if fixtureA:isSensor() and fixtureB:isSensor() then return end
 
+	-- ignore owner
 	if entity == self.owningEntity then return end
+	-- ignore teammates
 	if entity:getTag("enemy") == self.owner:getTag("enemy") then return end
-	
-	local collision = entity:getComponent("Collider")
+
+	local collider = entity:getComponent("Collider")
 	local vec2other = entity.transform.position - self.owningEntity.transform.position
-	collision:applyForce(vec2other.normalized * 8000)
+	collider:applyForce(vec2other.normalized * 8000)
 
 	local enemy = entity:getComponent("Enemy")
 
