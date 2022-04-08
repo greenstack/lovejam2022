@@ -7,6 +7,7 @@ require "components.render.spriteRender"
 local Cartographer = require "vendor.cartographer.cartographer"
 local Gamera = require "vendor.gamera.gamera"
 local Vector = require "vendor.brinevector.brinevector"
+local Color = require "color"
 
 World = {
 	entities = {},
@@ -152,8 +153,8 @@ function World:_spawnEvilCrystal(crystalNumber, warpSpot)
 		Vector(warpSpot.position.x, warpSpot.position.y),
 		{
 			healthComp,
-			SpriteRender:new("assets/sprites/evil_crystal.json", "assets/sprites/evil_crystal.png", "spin_full_hp"),
 			EvilCrystal:new(warpSpot),
+			SpriteRender:new("assets/sprites/evil_crystal.json", "assets/sprites/evil_crystal.png", "spin_full_hp"),
 		},
 		{
 			crystal = true,
@@ -161,12 +162,28 @@ function World:_spawnEvilCrystal(crystalNumber, warpSpot)
 		}
 	)
 	crystal:addComponent(CollisionComponent:new(crystal, "dynamic", self, 1000000000))
+
 	return crystal
 end
 
 function World:beginContact(a, b, coll)
 	local colliderA = a:getUserData()
 	local colliderB = b:getUserData()
+
+	if DEBUG_MODE then
+		local caName, cbName
+		if colliderA then
+			caName = tostring(colliderA.owner)
+		else
+			caName = "Unknown (A)"
+		end
+		if colliderB then
+			cbName = tostring(colliderB.owner)
+		else
+			cbName = "Unknown (B)"
+		end
+		--print("contact begin between " .. caName .. " and " .. cbName)
+	end
 
 	if colliderA and colliderB and colliderA.owner ~= colliderB.owner and colliderA:Started() and colliderB:Started() then
 		colliderA.owner:beginContact(colliderB.owner, coll)
