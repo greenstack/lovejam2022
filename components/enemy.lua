@@ -32,11 +32,16 @@ function Enemy:update(entity, dt)
 end
 
 function Enemy:onDestroy()
-	CurrentWorld.playerScore = CurrentWorld.playerScore + 30
+	if not self.notPlayerKill then
+		CurrentWorld.playerScore = CurrentWorld.playerScore + 30
+	end
 end
+
+local quakes_created = 0
 
 function Enemy:beginContact(other, coll)
 	if other:getTag("enemy") or other:getTag("crystal") then return end
+	if other:getTag("player") then self.notPlayerKill = true end
 	self.owner:kill()
 
 	local fixtureA, fixtureB = coll:getFixtures()
@@ -51,12 +56,13 @@ function Enemy:beginContact(other, coll)
 
 	-- create shockwave
 	local earthquake = Entity:new(
-		"enemyQuake",
+		"enemyQuake_" .. quakes_created,
 		self.owner.transform.position,
 		{
 			enemy = true,
 		}
 	)
+	quakes_created = quakes_created + 1
 	earthquake:addComponent(Shockwave:new(self.owner, earthquake, 0, self.deathRadius, Color(1, 0, 1)))
 	earthquake:setTag("enemy", true)
 	CurrentWorld:addEntity(earthquake)
