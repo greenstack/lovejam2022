@@ -27,7 +27,7 @@ local input = Baton.new
 
 function Player:new(position, components, tags, obj)
 	local player = Entity.new(self, "player", position, components, tags, obj)
-
+	player:setTag("player", true)
 	local playerCollision = CollisionComponent:new(player)
 	self.collider = playerCollision
 	player:addComponent(playerCollision)
@@ -45,6 +45,8 @@ function Player:new(position, components, tags, obj)
 	player.actionQueued = false
 	return player
 end
+
+local playerQuakesCreated = 0
 
 function Player:update(dt)
 	if not self.dead and self.collider.body ~= nil then
@@ -84,10 +86,11 @@ function Player:update(dt)
 			self.speed = self.chargeWalkSpeed
 		elseif (input:released("action")) and self.actionQueued then
 			self.actionQueued = false
-			self.earthquake = Entity:new("shockwave",
+			self.earthquake = Entity:new("shockwave_" .. playerQuakesCreated,
 				self.transform.position,
 				{}
 			)
+			playerQuakesCreated = playerQuakesCreated + 1
 			self.earthquake:addComponent(Shockwave:new(self, self.earthquake, 0, self.quakeSize, Color(0.18, 1, 0.37)))
 			CurrentWorld:addEntity(self.earthquake)
 			-- Stop the player: should not be able to move while earthquaking
