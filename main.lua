@@ -4,6 +4,7 @@ require "titleScreen"
 local Vector = require "vendor.brinevector.brinevector"
 local Baton = require "vendor.baton.baton"
 local Color = require "color"
+Audio = require "audio"
 
 local launchType = arg[2]
 
@@ -76,7 +77,7 @@ enemyCrystalBar.maxValueSource = function()
 end
 
 function love.load()
-	local windowTitle = "Magna and Dude"
+	local windowTitle = "Magna Classic"
 	if TEST_MODE then
 		windowTitle = windowTitle .. " (Test)"
 	elseif DEBUG_MODE then
@@ -104,6 +105,9 @@ function love.load()
 
 	local iconData = love.image.newImageData("assets/magna_icon.png")
 	love.window.setIcon(iconData);
+
+	Audio.music:setLooping(true)
+	love.audio.play(Audio.music)
 end
 
 function love.update(dt)
