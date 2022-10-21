@@ -131,10 +131,14 @@ function EvilCrystal:spawnChild(childData)
   local healthLost = 4 - self.healthPool:getCurrent()
   local speed = 100 * healthLost
   local deathRadius = 15 * (healthLost + 1)
+
+  love.audio.play(Audio.enemySpawn)
+
   return CurrentWorld:spawnEnemy(pixelX, pixelY, speed, deathRadius)
 end
 
 function EvilCrystal:die()
+  love.audio.play(Audio.enemyDeath)
   self.owner:kill()
 end
 
@@ -181,6 +185,7 @@ function EvilCrystal:beginContact(entity, collision)
   -- set this. When the post-resolve methods for collisions are called, we will
   -- then check if this is nil. If it isn't, then we'll warp to that location.
   self.nextWarp = nextWarp
+  love.audio.play(Audio.enemyWarp)
   self:_startOrResetQuakeTimer()
 end
 
