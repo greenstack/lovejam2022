@@ -101,6 +101,9 @@ function love.load()
 		end
 	)
 	CurrentWorld = MainGame.world
+
+	local iconData = love.image.newImageData("assets/magna_icon.png")
+	love.window.setIcon(iconData);
 end
 
 function love.update(dt)
