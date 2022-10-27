@@ -62,7 +62,11 @@ function EvilCrystal:start(entity)
     self:die()
   end)
   self.render = entity:getComponent("SpriteRender")
-
+  self.render.ing:onLoop(function()
+    if string.find(self.render.ing.tagName, "shoot_") then
+      self:_selectAnimFromHP("spin")
+    end
+  end)
   self:_validateSpawns()
   self:_startOrResetQuakeTimer()
 end
@@ -97,6 +101,7 @@ function EvilCrystal:update(entity, dt)
     earthquake:setTag("bigQuake", true)
     CurrentWorld:addEntity(earthquake)
     
+    self:_selectAnimFromHP("shoot")
   end
 end
 
@@ -162,11 +167,7 @@ function EvilCrystal:beginContact(entity, collision)
 
   -- update animation
   self.healthPool:loseHealth(1)
-  if self.healthPool:getCurrent() == 2 then
-    self.render:setTag("spin_damaged")
-  elseif self.healthPool:getCurrent() == 1 then
-    self.render:setTag("spin_critical")
-  end
+  self:_selectAnimFromHP("spin")
 
   -- don't warp if dead
   if self.owner.isPendingKill then
@@ -210,4 +211,20 @@ end
 
 function EvilCrystal:_startOrResetQuakeTimer()
   self.timeToQuake = self.timeBetweenQuakes
+end
+
+function EvilCrystal:_selectAnimFromHP(state)
+  if state ~= "spin" and state ~= "shoot" then
+    error("Invalid state " .. state)
+  end
+  local currentHP = self.healthPool:getCurrent()
+  local condition
+  if currentHP == 1 then
+    condition = "critical"
+  elseif currentHP == 2 then
+    condition = "damaged"
+  else
+    condition = "full_hp"
+  end 
+  self.render:setTag(state .. "_" .. condition)
 end
