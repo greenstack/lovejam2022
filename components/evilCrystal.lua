@@ -106,7 +106,9 @@ function EvilCrystal:update(entity, dt)
 end
 
 function EvilCrystal:draw(entity)
-  love.graphics.arc("line", 0, 0, 8, -gs.math.piOver2, gs.math.twoPi * self.timeToQuake / self.timeBetweenQuakes - gs.math.piOver2)
+  love.graphics.setColor(0.46, 0.03, 0.73, 0.5)
+  love.graphics.arc("fill", 0, 0, 10, -gs.math.piOver2, gs.math.twoPi * self.timeToQuake / self.timeBetweenQuakes - gs.math.piOver2)
+  love.graphics.setColor(1, 1, 1)
 end
 
 function EvilCrystal:handleChild(child, dt)
