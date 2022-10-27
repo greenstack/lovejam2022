@@ -137,6 +137,7 @@ function Player:stun()
 	self.stunned = true
 	self.stunTime = 1
 	self.render:setTag("stunned")
+	self.actionQueued = false
 end
 
 function Player:__tostring()
