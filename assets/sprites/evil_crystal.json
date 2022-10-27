@@ -46,7 +46,7 @@
    },
    {
     "filename": "evil_crystal 5.aseprite",
-    "frame": { "x": 0, "y": 16, "w": 16, "h": 16 },
+    "frame": { "x": 80, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -55,7 +55,7 @@
    },
    {
     "filename": "evil_crystal 6.aseprite",
-    "frame": { "x": 16, "y": 16, "w": 16, "h": 16 },
+    "frame": { "x": 96, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -64,7 +64,7 @@
    },
    {
     "filename": "evil_crystal 7.aseprite",
-    "frame": { "x": 32, "y": 16, "w": 16, "h": 16 },
+    "frame": { "x": 0, "y": 16, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -73,15 +73,33 @@
    },
    {
     "filename": "evil_crystal 8.aseprite",
+    "frame": { "x": 16, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 75
+   },
+   {
+    "filename": "evil_crystal 9.aseprite",
+    "frame": { "x": 32, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 75
+   },
+   {
+    "filename": "evil_crystal 10.aseprite",
     "frame": { "x": 48, "y": 16, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 150
+    "duration": 75
    },
    {
-    "filename": "evil_crystal 9.aseprite",
+    "filename": "evil_crystal 11.aseprite",
     "frame": { "x": 64, "y": 16, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -90,26 +108,8 @@
     "duration": 150
    },
    {
-    "filename": "evil_crystal 10.aseprite",
-    "frame": { "x": 0, "y": 32, "w": 16, "h": 16 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
-    "sourceSize": { "w": 16, "h": 16 },
-    "duration": 150
-   },
-   {
-    "filename": "evil_crystal 11.aseprite",
-    "frame": { "x": 16, "y": 32, "w": 16, "h": 16 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
-    "sourceSize": { "w": 16, "h": 16 },
-    "duration": 150
-   },
-   {
     "filename": "evil_crystal 12.aseprite",
-    "frame": { "x": 32, "y": 32, "w": 16, "h": 16 },
+    "frame": { "x": 80, "y": 16, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -118,7 +118,7 @@
    },
    {
     "filename": "evil_crystal 13.aseprite",
-    "frame": { "x": 48, "y": 32, "w": 16, "h": 16 },
+    "frame": { "x": 96, "y": 16, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -127,7 +127,7 @@
    },
    {
     "filename": "evil_crystal 14.aseprite",
-    "frame": { "x": 64, "y": 32, "w": 16, "h": 16 },
+    "frame": { "x": 0, "y": 32, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -136,7 +136,7 @@
    },
    {
     "filename": "evil_crystal 15.aseprite",
-    "frame": { "x": 0, "y": 48, "w": 16, "h": 16 },
+    "frame": { "x": 16, "y": 32, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -145,24 +145,78 @@
    },
    {
     "filename": "evil_crystal 16.aseprite",
+    "frame": { "x": 32, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 150
+   },
+   {
+    "filename": "evil_crystal 17.aseprite",
+    "frame": { "x": 48, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 150
+   },
+   {
+    "filename": "evil_crystal 18.aseprite",
+    "frame": { "x": 64, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 150
+   },
+   {
+    "filename": "evil_crystal 19.aseprite",
+    "frame": { "x": 80, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "evil_crystal 20.aseprite",
+    "frame": { "x": 96, "y": 32, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "evil_crystal 21.aseprite",
+    "frame": { "x": 0, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "evil_crystal 22.aseprite",
     "frame": { "x": 16, "y": 48, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 125
+    "duration": 75
    },
    {
-    "filename": "evil_crystal 17.aseprite",
+    "filename": "evil_crystal 23.aseprite",
     "frame": { "x": 32, "y": 48, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
     "sourceSize": { "w": 16, "h": 16 },
-    "duration": 125
+    "duration": 75
    },
    {
-    "filename": "evil_crystal 18.aseprite",
+    "filename": "evil_crystal 24.aseprite",
     "frame": { "x": 48, "y": 48, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -171,7 +225,7 @@
     "duration": 125
    },
    {
-    "filename": "evil_crystal 19.aseprite",
+    "filename": "evil_crystal 25.aseprite",
     "frame": { "x": 64, "y": 48, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -180,7 +234,25 @@
     "duration": 125
    },
    {
-    "filename": "evil_crystal 20.aseprite",
+    "filename": "evil_crystal 26.aseprite",
+    "frame": { "x": 80, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 27.aseprite",
+    "frame": { "x": 96, "y": 48, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 28.aseprite",
     "frame": { "x": 0, "y": 64, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -189,7 +261,7 @@
     "duration": 125
    },
    {
-    "filename": "evil_crystal 21.aseprite",
+    "filename": "evil_crystal 29.aseprite",
     "frame": { "x": 16, "y": 64, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -198,7 +270,7 @@
     "duration": 125
    },
    {
-    "filename": "evil_crystal 22.aseprite",
+    "filename": "evil_crystal 30.aseprite",
     "frame": { "x": 32, "y": 64, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -207,8 +279,80 @@
     "duration": 125
    },
    {
-    "filename": "evil_crystal 23.aseprite",
+    "filename": "evil_crystal 31.aseprite",
     "frame": { "x": 48, "y": 64, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 32.aseprite",
+    "frame": { "x": 64, "y": 64, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 33.aseprite",
+    "frame": { "x": 80, "y": 64, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 34.aseprite",
+    "frame": { "x": 96, "y": 64, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 35.aseprite",
+    "frame": { "x": 0, "y": 80, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 36.aseprite",
+    "frame": { "x": 16, "y": 80, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 37.aseprite",
+    "frame": { "x": 32, "y": 80, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 38.aseprite",
+    "frame": { "x": 48, "y": 80, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 125
+   },
+   {
+    "filename": "evil_crystal 39.aseprite",
+    "frame": { "x": 64, "y": 80, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -218,15 +362,18 @@
  ],
  "meta": {
   "app": "https://www.aseprite.org/",
-  "version": "1.2.33-x64",
+  "version": "1.2.40-x64",
   "image": "evil_crystal.png",
   "format": "RGBA8888",
-  "size": { "w": 80, "h": 80 },
+  "size": { "w": 112, "h": 96 },
   "scale": "1",
   "frameTags": [
    { "name": "spin_full_hp", "from": 0, "to": 7, "direction": "forward" },
-   { "name": "spin_damaged", "from": 8, "to": 15, "direction": "forward" },
-   { "name": "spin_critical", "from": 16, "to": 23, "direction": "forward" }
+   { "name": "shoot_full_hp", "from": 8, "to": 10, "direction": "forward" },
+   { "name": "spin_damaged", "from": 11, "to": 18, "direction": "forward" },
+   { "name": "shoot_damaged", "from": 19, "to": 23, "direction": "forward" },
+   { "name": "spin_critical", "from": 24, "to": 31, "direction": "forward" },
+   { "name": "shoot_critical", "from": 32, "to": 39, "direction": "forward" }
   ],
   "layers": [
    { "name": "backCore", "opacity": 255, "blendMode": "normal" },
