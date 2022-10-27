@@ -120,7 +120,6 @@ function love.update(dt)
 			DRAW_DEBUG = not DRAW_DEBUG
 		end
 	end
-
 	CurrentGame:update(dt)
 end
 
@@ -128,3 +127,6 @@ function love.draw()
 	CurrentGame:draw()
 end
 
+function love.keypressed(key, scancode)
+	if key == "m" then Audio:toggleMute() end
+end

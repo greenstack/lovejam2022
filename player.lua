@@ -49,7 +49,17 @@ end
 local playerQuakesCreated = 0
 
 function Player:update(dt)
-	if not self.dead and self.collider.body ~= nil then
+	if self.stunned then
+		print(dt)
+		print(self.stunTime .. " - " .. dt .. "=" .. self.stunTime - dt)
+		self.stunTime = self.stunTime - dt
+		print("Stun time remaining: " .. self.stunTime)
+		if self.stunTime <= 0 then
+			self.stunned = false
+		end
+	end
+
+	if not self.dead and self.collider.body ~= nil and not self.stunned then
 		if self.earthquake == nil or self.earthquake.isPendingKill then
 			input:update()
 			local x, y = input:get 'move'
@@ -76,7 +86,7 @@ function Player:update(dt)
 	-- update collision and such
 	self:updateComponents(dt)
 
-	if not self.dead then
+	if not self.dead and not self.stunned then
 		if self.actionQueued then
 			self.quakeSize = math.min(50, self.quakeSize + 64 * dt)
 		end
@@ -120,6 +130,13 @@ function Player:draw()
 		love.graphics.circle("line", self.transform.position.x, self.transform.position.y, self.quakeSize)
 		love.graphics.setColor(1,1,1)
 	end
+end
+
+function Player:stun()
+	if self.dead then return end
+	self.stunned = true
+	self.stunTime = 1
+	self.render:setTag("stunned")
 end
 
 function Player:__tostring()

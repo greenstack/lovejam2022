@@ -5,7 +5,16 @@ local audio = {
 	enemyDeath = love.audio.newSource("assets/sound/EnemyDeathv1.ogg", "static"),
 }
 
+function audio:toggleMute()
+	self.mute = not self.mute
+	if self.mute then
+		love.audio.setVolume(0)
+	else
+		love.audio.setVolume(.75)
+	end
+end
+
 audio.music:setVolume(.5)
 love.audio.setVolume(.75)
 
-return audio;
+return audio
