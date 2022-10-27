@@ -93,5 +93,5 @@ end
 function Shockwave:draw(entity)
 	love.graphics.setColor(self.color.r, self.color.g, self.color.b, self.color.a)
 	love.graphics.circle("line", 0, 0, self.currentRadius)
-	love.graphics.setColor(1, 1, 1, 1)
+	love.graphics.setColor(1, 1, 1)
 end
