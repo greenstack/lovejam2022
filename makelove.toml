@@ -1,0 +1,32 @@
+name = "Magna"
+default_targets = ["win32", "win64"]
+build_directory = "makelove-build"
+
+love_files = [
+    "+./*",
+    "-*/.*",
+    "-./*.aseprite",
+    "-./*.tmx",
+    "-./*.tsx",
+    "-./makelove*",
+    "-./*.bat",
+    "-./*README.md",
+    "-./*CHANGELOG.md",
+    "-./vendor/peachy/docs*",
+    "-./vendor/peachy/main.lua",
+    "-./vendor/cartographer/demos*",
+    "-./vendor/cartographer/main.lua",
+    "-./vendor/cartographer/conf.lua",
+    "-./vendor/brinevector/cheatsheet.md",
+    "-./vendor/baton/main.lua",
+]
+
+icon_file = "assets/magna_icon.ico"
+
+[windows]
+[windows.exe_metadata]
+FileDescription = "{name} {version}"
+FileVersion = "1.0.0"
+CompanyName = "GreenstackJ"
+LegalCopyright = "Copyright © 2022 GreenstackJ"
+ProductName = "{name}"
