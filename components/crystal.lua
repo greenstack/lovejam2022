@@ -40,6 +40,7 @@ function Crystal:beginContact(entity, contact)
 		-- If the quake is a big quake, we want to add the owner of the
 		-- shockwave to an "immunity" list. For a time, the crystal is immune to
 		-- shockwaves emitted by crystals in that immunity list.
+		Audio:playCrystalCrack()
 		self.healthPool:loseHealth(1)
 		CurrentWorld.map.layers.crystals:setTileAtGridPosition(
 			self.gridX,
