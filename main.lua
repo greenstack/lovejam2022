@@ -1,9 +1,7 @@
 require "game"
 require "titleScreen"
 
-local Vector = require "vendor.brinevector.brinevector"
 local Baton = require "vendor.baton.baton"
-local Color = require "color"
 Audio = require "audio"
 
 local launchType = arg[2]
@@ -53,30 +51,6 @@ CurrentGame = nil
 MainGame = nil
 Title = nil
 
-local worldHealthBar = Bar:new("worldHealth", Vector(10, 10), Color(0, 1, 0), 100, 10)
-
-worldHealthBar.currentValueSource = function()
-	local health = 0
-	for _, crystal in ipairs(CurrentWorld.worldCrystals) do
-		health = health + crystal:getComponent("Health"):getCurrent()
-	end
-	return health
-end
-
-worldHealthBar.maxValueSource = function()
-	return CurrentWorld.totalCrystalCount * 3
-end
-
-local enemyCrystalBar = Bar:new("enemyCrystals", Vector(10, 23), Color(1, 0, 0), 100, 10)
-
-enemyCrystalBar.currentValueSource = function()
-	return CurrentWorld.evilCrystalCount
-end
-
-enemyCrystalBar.maxValueSource = function()
-	return CurrentWorld.totalEvilCrystalCount
-end
-
 function love.load()
 	local windowTitle = "Magna Classic"
 	if TEST_MODE then
@@ -89,19 +63,6 @@ function love.load()
 	CurrentGame = TitleScreen:new()
 	Title = CurrentGame
 	MainGame = Game:new()
-	MainGame:addPostWorldDrawCallback(
-		function ()
-			worldHealthBar:draw()
-			enemyCrystalBar:draw()
-				love.graphics.printf(
-				"Score: " .. CurrentWorld.playerScore,
-				love.graphics.getWidth() / 2,
-				10,
-				love.graphics.getWidth() / 4,
-				"center"
-			)
-		end
-	)
 	CurrentWorld = MainGame.world
 
 	local iconData = love.image.newImageData("assets/magna_icon.png")

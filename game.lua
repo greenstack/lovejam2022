@@ -3,6 +3,7 @@ require "player"
 require "ecs.world"
 
 local Baton = require "vendor.baton.baton"
+local Color = require "color"
 
 local input = Baton.new
 {
@@ -34,6 +35,45 @@ function Game:new(obj)
 	game.drawCallbacks = {}
 	game.gameOverImage = love.graphics.newImage("assets/sprites/gameOver.png")
 	game.gameOverImage:setFilter("nearest", "nearest")
+
+	local worldHealthBar = Bar:new("worldHealth", Vector(10, 10), Color(0, 1, 0), 100, 10)
+
+	worldHealthBar.currentValueSource = function()
+		local health = 0
+		for _, crystal in ipairs(CurrentWorld.worldCrystals) do
+			health = health + crystal:getComponent("Health"):getCurrent()
+		end
+		return health
+	end
+
+	worldHealthBar.maxValueSource = function()
+		return CurrentWorld.totalCrystalCount * 3
+	end
+
+	local enemyCrystalBar = Bar:new("enemyCrystals", Vector(10, 23), Color(1, 0, 0), 100, 10)
+
+	enemyCrystalBar.currentValueSource = function()
+		return CurrentWorld.evilCrystalCount
+	end
+
+	enemyCrystalBar.maxValueSource = function()
+		return CurrentWorld.totalEvilCrystalCount
+	end
+
+	game:addPostWorldDrawCallback(
+		function ()
+			worldHealthBar:draw()
+			enemyCrystalBar:draw()
+				love.graphics.printf(
+				"Score: " .. CurrentWorld.playerScore,
+				love.graphics.getWidth() / 2,
+				10,
+				love.graphics.getWidth() / 4,
+				"center"
+			)
+		end
+	)
+
 	return game
 end
 
