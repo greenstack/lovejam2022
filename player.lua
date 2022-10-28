@@ -49,6 +49,8 @@ end
 local playerQuakesCreated = 0
 
 function Player:update(dt)
+	input:update()
+
 	if self.stunned then
 		print(dt)
 		print(self.stunTime .. " - " .. dt .. "=" .. self.stunTime - dt)
@@ -61,7 +63,6 @@ function Player:update(dt)
 
 	if not self.dead and self.collider.body ~= nil and not self.stunned then
 		if self.earthquake == nil or self.earthquake.isPendingKill then
-			input:update()
 			local x, y = input:get 'move'
 			self.collider:applyForce(Vector(x, y) * self.speed)
 			-- Kill the earthquake if necessary
@@ -118,8 +119,12 @@ function Player:die()
 	self.dead = true
 	self.render:setTag("die")
 	self.render.ing:onLoop(function() 
-		self.render.ing:stop(true)
-		CurrentWorld:gameOver(false)
+		Audio:playMagnaDeath()
+		self.render:setTag("petrify")
+		self.render.ing:onLoop(function()
+			self.render.ing:stop(true)
+			CurrentWorld:gameOver(false)
+		end)
 	end)
 end
 
