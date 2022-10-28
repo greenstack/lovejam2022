@@ -1,43 +1,39 @@
 # GreenstackJ's LöveJam 2022 Entry
-_Magna and Dude_ (working title) is a game about a dude named Richter seeking to
-save his his sister, Magna. To do so, Richter must learn to use his family's
-magic to defeat dozens of monsters to delve deeper into the Fissure Dungeon.
+_Magna_ is an arcade-style game where you play as the eponymous Magna as she
+tries to protect her cave from the evil invading crystals.
 
-## Installation
-Requires Love 11.4. The .vscode folder has settings to make running and
+The game was originally made during the 2022 LoveJam on itch.io.
+
+## Gameplay
+Move with the WASD keys.  
+Press and hold X to charge an earthquake. Release the X to fire it off.  
+If all the green crystals are destroyed, it's game over!  
+Suvive as long as you can and try to get the high score.
+
+# Installation
+Requires Love 11.3+. The .vscode folder has settings to make running and
 debugging easier; the info for how to set this up is available [here][SheepArticle].
 (You only need to install the listed extensions for the time being.)
 
 Clone the repo with the `--recursive` flag.
 
-## Gameplay
-This is more of a wishlist than anything. If the brackets have a ✔ next
-to it, then it's implemented! If it has an ❌, then it's not.
-
-- ❌ Quakes:
-	- ❌ If enemies hit something from the push, they take damage
-	- ❌ Hold down the quake button to charge up a bigger and more powerful quake
-	- ❌ Stronger quakes cause more damage to the level
-		- ❌If the level takes too much damage, the level "collapses" and it's game
-		over
-- ❌ Quake types:
-	- ❌ Standard:
-		- ❌ No cooldown
-		- ❌ Just pushes enemies away
-		- ❌ Can destroy some structures
-	- ❌ Volcano:
-		- ❌ Moderate cooldown
-		- ❌ Sets enemies on fire, which deals damage over time
-	- ❌ Mountain:
-		- ❌ Long cooldown
-		- ❌ Hits flying enemies
-		- ❌ Stuns all enemies it hits
-
-## Thanks/Credits
+# Thanks/Credits
+## Libraries
 [Tesselode/Baton][Baton] (Input library)  
+[josh-perry/Peachy][Peachy] (Aseprite Animation Library)  
+[kikito/Gamera][Gamera] (Camera library)  
 [novemberisms/Brinevector][Brinevector] (Vector math library)  
 [Sheepollution's Article on Setting up VSCode with Love2D][SheepArticle]
+[pfirsich/Makelove][Makelove] (Love2D packaging library)
+
+## Sound Effects
+Music and enemy crystal sound effects: 5Carbon  
+[Magna's Death SFX from Pixabay](https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=6409)  
+[Crystal Breaking SFX by BlenderTime from Pixabay](https://pixabay.com/users/blendertimer-9538909/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=music&amp;utm_content=13847)  
 
 [Baton]: https://github.com/tesselode/baton
 [Brinevector]: https://github.com/novemberisms/brinevector
+[Peachy]: https://github.com/josh-perry/peachy
+[Gamera]: https://github.com/kikito/gamera
 [SheepArticle]: https://www.sheepolution.com/learn/book/bonus/vscode
+[Makelove]: https://github.com/pfirsich/makelove
